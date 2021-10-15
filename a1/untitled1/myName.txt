@@ -1,0 +1,7 @@
+Name: myName
+Question: myQuestion
+Choice choice0 has 0 votes.
+Choice choice1 has 0 votes.
+Choice choice2 has 1 votes.
+Choice choice3 has 0 votes.
+Choice choice4 has 0 votes.

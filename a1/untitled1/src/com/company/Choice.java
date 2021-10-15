@@ -26,12 +26,10 @@ public class Choice {
         return choice;
     }
 
-    public void setChoice(String choice) {
-        this.choice = choice;
-    }
+    public void setChoice(String choice) {this.choice = choice;}
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public void setDescription(String description) {
