@@ -45,14 +45,14 @@
 <br>
 <br>
 <div class="container-fluid bg-light">
-    <form action="PollApp"  method="Get">
+    <form action="PollApp"  method="Post">
         <h3 style="text-align: center">  Here is the form where you can vote</h3>
         <div class="mb-4">
             <label for="exampleInputID1" class="form-label">Enter your User ID</label>
             <input  name="VoteUserID" type="text" class="form-control" id="exampleInputID1" aria-describedby="IDHelp">
         </div>
         <div class="mb-3">
-            <label for="UserType">Choose a choice amongst the ones entered for the poll:</label>
+            <label for="VoteUserType">Choose a choice amongst the ones entered for the poll:</label>
             <select  class="form-select" aria-label="Default select example" name="VoteUserType" id="VoteUserType">
 
                 <%for (String s: arrODescriptionChoice){%>

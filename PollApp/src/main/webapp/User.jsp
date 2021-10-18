@@ -19,7 +19,7 @@
 
 <%
     // creating a value held by the session so that the user has been visited
-  request.getSession().setAttribute("user",true);
+    request.getSession().setAttribute("user",true);
     request.getSession().setAttribute("vote",false);
     request.getSession().setAttribute("Poll",false);
     request.getSession().setAttribute("Choices","");
@@ -27,7 +27,7 @@
     %>
 <br>
 <div class="container-fluid bg-light">
-    <form  action="PollApp"  method="Get">
+    <form  action="PollApp"  method="Post">
         <h3 style="text-align: center">  Here is the form for the User creation</h3>
         <div class="mb-4">
             <label for="exampleInputID1" class="form-label">Enter the User ID</label>

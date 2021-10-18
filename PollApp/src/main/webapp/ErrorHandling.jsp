@@ -1,6 +1,7 @@
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="java.io.FileWriter" %>
-<%@ page import="java.io.IOException" %><%--
+<%@ page import="java.io.IOException" %>
+<%@ page import="company.PollManager" isErrorPage="true" %><%--
   Created by IntelliJ IDEA.
   User: maama
   Date: 2021-10-16
@@ -16,21 +17,16 @@
     </style>
 
 </head>
-<body>
+<body style="background-color: #dc143c">
 <jsp:include page="Header.jsp" />
-
+<%
+    String Error =  session.getAttribute("ErrorMessage").toString();
+%>
 <br>
 <div class="container-fluid bg-light">
-    <form  action="PollApp"  method="Get">
-        <h3 style="text-align: center">  Here is the form  to download the results</h3>
-                     <br>
-
-        <div class="d-grid gap-1">
-            <button type="submit"  class="btn btn-dark ">Release</button>
-            <br>
-        </div>
-    </form>
-
+    <h1> There is an Error </h1>
+    <br>
+    <h2> <% out.println(Error); %></h2>
 </div>
 </body>
 </html>

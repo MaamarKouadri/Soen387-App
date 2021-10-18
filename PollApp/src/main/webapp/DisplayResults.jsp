@@ -1,4 +1,4 @@
-<%--
+<%@ page import="company.PollManager" %><%--
   Created by IntelliJ IDEA.
   User: maama
   Date: 2021-10-16
@@ -14,6 +14,11 @@
             position: relative;
             top:0%;
             left: 11%;
+        }
+        #CenterDiv{
+            position: relative;
+            width:27%;
+            left:37%;
         }
     </style>
     <script type="text/javascript">
@@ -85,7 +90,15 @@
 <jsp:include page="Header.jsp" />
 <div id="piechart_3d"  style="width: 1200px; height: 700px;">
     <h3 style="alignment: center"> Poll Results </h3>
-
 </div>
+
+<form id="CenterDiv" action="PollApp"  method="Get">
+    <button type="submit" style="position: center" style="align-content: center"  class="btn btn-dark ">Click Here to Download the Results</button>
+</form>
 </body>
 </html>
+
+<%
+    //Clearing the Poll after Results have been displayed.
+    ((PollManager) session.getAttribute("PollObject")).ClearPoll();
+    %>

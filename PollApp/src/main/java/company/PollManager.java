@@ -202,4 +202,9 @@ public class PollManager {
                 ", isPollCreated=" + isPollCreated +
                 '}';
     }
+
+
+    public Poll getPoll() {
+        return poll;
+    }
 }

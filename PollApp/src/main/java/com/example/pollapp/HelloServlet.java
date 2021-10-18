@@ -8,24 +8,34 @@ import company.Choice;
 import company.PollManager;
 import company.User;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
+
+    /*
+
+     <a href="DisplayResults.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='DisplayResults.jsp'">Display Result</a>
+            <a href="DownLoadResults.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='DownLoadResults.jsp'">Download Results</a>
+
+     */
     private String message;
     private Choice [] ChoiceArray;
+    private PollManager Poll;
     private User [] UserArray;
     private String UserTostring;
     private int NumberOfVisits = 0;
     private ArrayList<User> Array = new ArrayList<User>() ;
     private ArrayList<Choice> ArrayChoice = new ArrayList<Choice>() ;
+    private String ErrorMessage;
 
     public void init() {
         message = "We have just created a user";
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
 
         //getServletContext().getRequestDispatcher("/includes/User.jsp").include(request,response);
@@ -54,7 +64,6 @@ public class HelloServlet extends HttpServlet {
                Array.add(user1);
                response.sendRedirect("User.jsp");
            }
-
 
            if( PollVisited && request.getParameter("PollName")!= null
            && request.getParameter("PollChoice") != null
@@ -113,10 +122,6 @@ public class HelloServlet extends HttpServlet {
                    Users += a.toString() +"\n";
                }
 
-               //Creating a new Poll Manager
-
-             //  Poll OurPOLL = new Poll(PollName,PollQuestion,ChoiceArray,UserArray);
-
                        if(CorrectCreator) {
                            out.println("Is it the correct Creator ? " + CorrectCreator);
                            out.println("The users are " + Users);
@@ -124,33 +129,24 @@ public class HelloServlet extends HttpServlet {
                            out.println("Size of Choices " + arrOfChoices.length );
                            out.println("Size of Description " + arrOfDescription.length);
                            out.println("Are they the same Size " + SameSize);
-                         //  String MyChoices = request.getParameter("Choices");
-                         //  String [] arrODescriptionChoice = MyChoices.split(",");
                             out.println(PollChoice);
                             out.println("\n");
                            out.println("\n");
                            out.println(DescriptionChoice);
 
-                           PollManager Poll = new PollManager();
+                           Poll = new PollManager();
                            Poll.CreatePoll(PollName,PollQuestion,ChoiceArray,UserArray);
+                           request.getSession().setAttribute("PollObject",Poll);
                            Poll.RunPoll();
                            response.sendRedirect("Vote.jsp");
-                          // Poll.setStatus()
-                           /*
-                           String MyChoices = request.getParameter("Choices");
-                           String [] arrODescriptionChoice = MyChoices.split(",");
-                          for(String s :arrODescriptionChoice ){
-                              out.println(s);
-                          }
 
-*/
                        }
-
                        else
                {
-                   out.println("This is not the correct User we cannot create the poll");
+                   ErrorMessage = "This is not the correct PassCode we cannot create the poll";
+                   session.setAttribute("ErrorMessage",ErrorMessage);
+                   response.sendRedirect("ErrorHandling.jsp");
                }
-
            }
 
            // Here We would Handle the Vote
@@ -177,7 +173,6 @@ public class HelloServlet extends HttpServlet {
                       if(a.getUniqueId().contentEquals(VotUser))
                           a.vote(c);
                 }
-
 
                  boolean EveryBodyHasVoted = true;
 
@@ -236,7 +231,7 @@ public class HelloServlet extends HttpServlet {
                     request.getSession().setAttribute("FinalArray2",ChoicesNumberOfTimes);
 
 
-
+                    ((PollManager) session.getAttribute("PollObject")).ClearPoll();
                     response.sendRedirect("DisplayResults.jsp");
                 }
 
@@ -247,91 +242,93 @@ public class HelloServlet extends HttpServlet {
                 }
 
             }
-        //HttpSession session = request.getSession();
-        //int k  = (int)session.getAttribute("k");
-
-        /*
 
 
-
-        User user1 = new User(type,ID);
-
-        Array.add(user1);
-
-        User [] UserArray = Array.toArray(new User[0]);
-
-        Choice [] ChoiceArray = ArrayChoice.toArray(new Choice[0]);
-
-            String Users = "The Users are " + "\n";
-
-            for(User a :UserArray ){
-
-                Users += a.toString() +"\n";
-            }
-         UserTostring = user1.toString();
-
-            //Creating a new Poll Manager
-
-        PollManager Poll = new PollManager();
-
-        Poll.CreatePoll(PollName,PollQuestion,ChoiceArray,UserArray);
-
-       String UserC ="We have crated a new user , with ID " + ID +" of type" + type;
-        message=UserC + " Number of visits " + NumberOfVisits;
-        // Hello
-        PrintWriter out = response.getWriter();
-        out.println("<html><body>");
-        out.println("<h1>" + message + "</h1>");
-        out.println("<h1>" + UserTostring + "</h1>");
-        out.println("<h1>" + Users + "</h1>");
-        out.println("<h1>" + PollName + "</h1>");
-        out.println("<h1>" + PollQuestion + "</h1>");
-        out.println("<h1>" + PollChoice + "</h1>");
-        out.println("select name='UserType' id='UserType' ");
-        out.println("</body></html>");
-*/
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-
-        try {
-            FileWriter myWriter = new FileWriter("Results.txt");
-            myWriter.write("Files in Java might be tricky, but it is fun enough!");
-            //  request.getSession().setAttribute("TextFile",myWriter);
-            myWriter.close();
-            System.out.println("Successfully wrote to the file.");
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-        String data ="Something";
-        try {
-            File myObj = new File("Results.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                 data = myReader.nextLine();
-                System.out.println(data);
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-        // Hello
+        HttpSession session = request.getSession();
+        // Releasing the Poll here.
+        ((PollManager) session.getAttribute("PollObject")).ReleasePoll();
         PrintWriter out = response.getWriter();
-        out.println("<html><body>");
-        out.println("<h1>" + data + "</h1>");
-        out.println("</body></html>");
+        String data = "Hello";
+        //cchange the patth of the file
+        String Choices;
+        String Choices2;
+        String Choicesx;
+        String Choices2x;
+        String[] ChoiceArrx;
+        String[] ChoiceArr2x;
+        try {
+
+            session = request.getSession();
+            Choicesx = session.getAttribute("FinalArray").toString();
+            ChoiceArrx = Choicesx.split(",");
+            Choices2x = session.getAttribute("FinalArray2").toString();
+           ChoiceArr2x = Choices2x.split(",");
+
+            int size = 0;
+            int size2 = 0;
+
+            size = ChoiceArrx.length;
+            size2 = ChoiceArr2x.length;
+             Choices =" Je suis la";
+
+            //Choices2 =" Je suis Vegeta sdad";
+
+            String[] ChoiceArr = {"Blue","Red"};
+            String[] ChoiceArr2 = {"1","2"};
+            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\maama\\OneDrive\\Bureau\\Soen387-App\\PollApp\\TheResultsFinal.txt"));
+
+            bw.write("This is our results File");
+            bw.write("\n");
+            bw.write("\n");
+
+            out.println("This is our results File");
+            out.println("\n");
+            out.println("\n");
+
+            int sum = 0;
+            for (String s : ChoiceArr2) {
+
+                sum += Integer.parseInt(s);
+            }
+            for (int i = 1; i < ChoiceArrx.length; i++) {
+               double value = Double.parseDouble(ChoiceArr2x[i]) / sum;
+                double roundOff = (double) Math.round(value * 100) / 100;
+
+                bw.write("Choice :" + ChoiceArrx[i] + "  Number of votes received: " + ChoiceArr2x[i] + " Percentage: " + roundOff +" %");
+                bw.write("\n");
+
+                out.println("Choice :" + ChoiceArrx[i] + "  Number of votes received: " + ChoiceArr2x[i] + " Percentage: " + roundOff +" %");
+                out.println("\n");
+            }
+            bw.close();
+
+            response.setContentType("text/plain");
+            response.setHeader("Content-disposition", "attachment; filename=TheResultsFinal.txt");
+             //Not sure about this one verify
+            response.setHeader("Cache-Control","no-cache,no-store,must-revalidate");
+            //Expires the cache control
+            response.setHeader("Expires","-1");
+            ServletOutputStream out3 = response.getOutputStream();
+            out3.println("Vegeta is King");
+
+            out.close();
+            out3.close();
+            // Releasing the Poll here.
+            ((PollManager) session.getAttribute("PollObject")).ClosePoll();
+
+            return;
 
 
-
-
+        } catch (Exception ex) {
+            return;
+        }
+        // Hello
 
     }
-
     public void destroy() {
     }
 }

@@ -21,12 +21,12 @@
 
 <br>
 <div class="container-fluid bg-light">
-    <form  action="PollApp"  method="Post">
+    <form  action="PollApp"  method="Get">
         <h3 style="text-align: center">  Here is the form  to download the results</h3>
                      <br>
 
         <div class="d-grid gap-1">
-            <button type="submit"  class="btn btn-dark ">Download</button>
+            <button type="submit"  class="btn btn-dark ">Release</button>
             <br>
         </div>
     </form>

@@ -20,10 +20,10 @@
 <br>
 <br>
 <div class="container-fluid bg-light">
-    <form action="PollApp"  method="Get">
+    <form action="PollApp"  method="Post">
         <h3 style="text-align: center">  Here is the form for the Poll creation</h3>
         <div class="mb-4">
-            <label for="exampleInputID" class="form-label">Please enter your user ID</label>
+            <label for="exampleInputID" class="form-label">Please enter the PassCode</label>
             <input  name="PollUserID" type="text" class="form-control" id="exampleInputID" >
         </div>
         <div class="mb-4">
