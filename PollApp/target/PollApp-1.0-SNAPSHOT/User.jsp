@@ -22,6 +22,7 @@
     request.getSession().setAttribute("user",true);
     request.getSession().setAttribute("vote",false);
     request.getSession().setAttribute("Poll",false);
+    request.getSession().setAttribute("HiddenManagement",false);
     request.getSession().setAttribute("Choices","");
     request.getSession().setAttribute("DescriptionChoices","");
     %>

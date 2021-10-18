@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import company.Choice;
 import company.PollManager;
+import company.State;
 import company.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
@@ -46,7 +47,7 @@ public class HelloServlet extends HttpServlet {
         boolean UserVisited  = (boolean)session.getAttribute("user");
         boolean PollVisited  = (boolean)session.getAttribute("Poll");
         boolean VoteVisited  = (boolean)session.getAttribute("vote");
-
+        boolean HiddenManagement =  (boolean)session.getAttribute("HiddenManagement");
            if(UserVisited &&  request.getParameter("UserID") != null
 
            && request.getParameter("UserType") != null ){
@@ -64,7 +65,7 @@ public class HelloServlet extends HttpServlet {
                Array.add(user1);
                response.sendRedirect("User.jsp");
            }
-
+// NewCode
            if( PollVisited && request.getParameter("PollName")!= null
            && request.getParameter("PollChoice") != null
            && request.getParameter("Description") !=null
@@ -244,8 +245,40 @@ public class HelloServlet extends HttpServlet {
             }
 
 
-    }
+            if(HiddenManagement ){
+                String action = request.getParameter("PollAction").toString();
 
+                if(action.contentEquals("Unrelease Poll")){
+                    ((PollManager) session.getAttribute("PollObject")).unreleasePoll();
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                }
+                if(action.contentEquals("Clear Poll")){
+                    ((PollManager) session.getAttribute("PollObject")).ClearPoll();
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                }
+                if(action.contentEquals("Update Poll")){
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+
+                }
+                if(action.contentEquals("Run Poll")){
+
+                    ((PollManager) session.getAttribute("PollObject")).RunPoll();
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                }
+                if(action.contentEquals("Release Poll")){
+
+                    ((PollManager) session.getAttribute("PollObject")).ReleasePoll();
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                }
+                if(action.contentEquals("Close Poll")){
+
+                    ((PollManager) session.getAttribute("PollObject")).ClosePoll();
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                }
+            }
+
+
+    }
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
         HttpSession session = request.getSession();
@@ -294,6 +327,10 @@ public class HelloServlet extends HttpServlet {
 
                 sum += Integer.parseInt(s);
             }
+            // Processing downlaod you only need those two arrays
+
+            //((PollManager) session.getAttribute("PollObject")).downloadPollDetails();
+
             for (int i = 1; i < ChoiceArrx.length; i++) {
                double value = Double.parseDouble(ChoiceArr2x[i]) / sum;
                 double roundOff = (double) Math.round(value * 100) / 100;
