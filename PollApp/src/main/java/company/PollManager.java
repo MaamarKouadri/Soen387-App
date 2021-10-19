@@ -188,7 +188,7 @@ public class PollManager {
     /**
      * gets number of votes per poll question
      */
-    public HashMap<Choice,Integer> getPollResults() {
+    public HashMap<Choice,Integer> getPollResults() throws Exception {
         if(debug)
             System.out.println("getting poll results");
 
@@ -196,6 +196,7 @@ public class PollManager {
         if(!this.poll.getStatus().equals(State.Released)) {
             if(debug)
                 System.out.println("error occurred! getPollResults()");
+            throw new Exception();
         }
 
         return this.poll.getPollResults();

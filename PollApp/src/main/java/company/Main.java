@@ -5,12 +5,12 @@ import java.util.Random;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 	// write your code here
         testPollManager();
     }
 
-    static public void testPollManager() {
+    static public void testPollManager() throws Exception {
         PollManager pm = new PollManager();
 
         int choiceSize = 5;

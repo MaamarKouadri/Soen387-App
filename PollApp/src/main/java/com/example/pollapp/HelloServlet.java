@@ -2,6 +2,7 @@ package com.example.pollapp;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import company.Choice;
@@ -408,13 +409,12 @@ public class HelloServlet extends HttpServlet {
 
             // Now we Iterate through the User array to notify that this user has Voted
             int index =0;
-            String Description ="";
+            Choice c = ChoiceArray[0];
             for(Choice a : ChoiceArray){
                 if(a.getChoice().contentEquals(VoteUserType))
-                    Description = VoteUserType;
+                    c = a;
             }
 
-            Choice c = new Choice(Description,VotUser);
             for(User a : UserArray){
                 if(a.getUniqueId().contentEquals(VotUser)) {
                     if(!Poll.vote(a,c)){
@@ -434,60 +434,8 @@ public class HelloServlet extends HttpServlet {
             }
 
             if(EveryBodyHasVoted){
-
-                out.println("EveryBody has Voted");
-                for(User a : UserArray){
-                    out.println("User with ID " +  a.getUniqueId() + " has voted " + a.getChoiceSelected());
-                }
-
-                int [] ChoicesSelected = new int [ChoiceArray.length];
-
-                int count=0;
-                int index2 = 0;
-
-                for(Choice ch :ChoiceArray){
-                    for(User a : UserArray){
-                        if(a.getChoiceSelected().getChoice().contentEquals(ch.getChoice()))
-                            count++;
-                    }
-                    ChoicesSelected[index2] = count;
-                    index2++;
-                    count=0;
-                }
-
-                String ChoicesSplit ="";
-                String ChoicesNumberOfTimes ="";
-
-                for(Choice cs : ChoiceArray){
-
-                    ChoicesSplit+="," + cs.getChoice();
-                }
-
-                for(int cs : ChoicesSelected){
-
-                    ChoicesNumberOfTimes+="," + cs;
-                }
-
-                for(int i = 0 ; i < ChoiceArray.length ; i++){
-
-                    out.println( "Choice " + ChoiceArray[i] + " has been selected " + ChoicesSelected[i] +" times");
-                    out.print("\n");
-                    out.print("\n");
-                    out.print("\n");
-                    out.println("---------------------------------");
-
-                }
-
-
-                request.getSession().setAttribute("FinalArray",ChoicesSplit);
-                request.getSession().setAttribute("FinalArray2",ChoicesNumberOfTimes);
-
-
-                ((PollManager) session.getAttribute("PollObject")).ClearPoll();
-
-                // only send redirect if no error
-                if(!isError)
-                    response.sendRedirect("DisplayResults.jsp");
+                Poll.ReleasePoll();
+                getPollResults(request, out, response, session);
             } else{
 
                 out.println("Not EveryBody has Voted");
@@ -498,6 +446,35 @@ public class HelloServlet extends HttpServlet {
 
         }
     }
+    public void getPollResults(HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
+
+        try {
+            HashMap pollResults = Poll.getPollResults();
+
+            String ChoicesSplit = "";
+            String ChoicesNumberOfTimes ="";
+
+            for ( Object choice : pollResults.keySet() ) {
+                ChoicesSplit += "," + ((Choice) choice).getChoice();
+                ChoicesNumberOfTimes += "," +pollResults.get(((Choice) choice));
+            }
+
+
+            request.getSession().setAttribute("FinalArray",ChoicesSplit);
+            request.getSession().setAttribute("FinalArray2",ChoicesNumberOfTimes);
+
+
+
+            // only send redirect if no error
+            if(!isError)
+                response.sendRedirect("DisplayResults.jsp");
+        } catch(Exception e){
+            ErrorMessage = "Can only get poll results vote in released state.";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+    }
 
     public void displayResultsPage(boolean displayResults, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
         if(!Poll.getPollCreated()) {
@@ -506,7 +483,7 @@ public class HelloServlet extends HttpServlet {
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         } else {
-            response.sendRedirect("DisplayResults.jsp");
+            getPollResults(request, out, response, session);
         }
     }
 
@@ -561,16 +538,6 @@ public class HelloServlet extends HttpServlet {
                         response.sendRedirect("HiddenManagementSystem.jsp");
                     } else {
                         ErrorMessage = "Can only unrelease poll in released state.";
-                        session.setAttribute("ErrorMessage",ErrorMessage);
-                        response.sendRedirect("ErrorHandling.jsp");
-                        isError = true;
-                    }
-                }
-                if(action.contentEquals("Clear Poll")){
-                    if(!isError && ((PollManager) session.getAttribute("PollObject")).ClearPoll()){
-                        response.sendRedirect("HiddenManagementSystem.jsp");
-                    } else {
-                        ErrorMessage = "Can only clear poll from running or released state.";
                         session.setAttribute("ErrorMessage",ErrorMessage);
                         response.sendRedirect("ErrorHandling.jsp");
                         isError = true;

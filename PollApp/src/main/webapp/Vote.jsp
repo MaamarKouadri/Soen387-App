@@ -74,11 +74,9 @@
         </div>
     </form>
 </div>
-<!--
 <form action="PollApp"  method="Post">
     <input type="hidden" name="displayResults" value="true">
     <button type="submit"  class="btn btn-Success ">Display Results</button>
 </form>
--->
 </body>
 </html>

@@ -97,8 +97,3 @@
 </form>
 </body>
 </html>
-
-<%
-    //Clearing the Poll after Results have been displayed.
-    ((PollManager) session.getAttribute("PollObject")).ClearPoll();
-    %>
