@@ -20,22 +20,25 @@
     System.out.println("------------------------");
      */
 
-    request.getSession().setAttribute("HiddenManagement",true);
+    request.getSession().setAttribute("HiddenManagementSystem",true);
+    request.getSession().setAttribute("vote",false);
+    request.getSession().setAttribute("PollManagement",false);
+    request.getSession().setAttribute("user",false);
+    request.getSession().setAttribute("Poll",false);
+    request.getSession().setAttribute("updatePoll",false);
 %>
 
 <div class="container-fluid bg-light">
     <form  action="PollApp"  method="Post">
         <h3 style="text-align: center">  Poll Management System</h3>
         <br>
-        <h4>The current poll state is <%   out.println(((PollManager) session.getAttribute("PollObject")).getPoll().getStatus()); %>
+        <h4>The current poll state is <%   if(session.getAttribute("PollObject")!=null) out.println(((PollManager) session.getAttribute("PollObject")).getPoll().getStatus()); %>
             </h4>
         <div class="mb-3">
             <label for="PollAction">Action to take </label>
             <select  class="form-select" aria-label="Default select example" name="PollAction" id="PollAction">
                 <option>Release Poll</option>
                 <option>Unrelease Poll</option>
-                <option>Clear Poll</option>
-                <option>Update Poll</option>
                 <option>Run Poll</option>
                 <option>Close Poll</option>
             </select>

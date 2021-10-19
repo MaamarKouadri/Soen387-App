@@ -105,7 +105,7 @@ public class Poll {
      *
      * @throws FileNotFoundException
      */
-    public void downloadPollResults() throws FileNotFoundException {
+    public boolean downloadPollResults() throws FileNotFoundException {
         PrintWriter pw = new PrintWriter(new File(this.getName()) + ".txt");
         pw.write("Name: " + this.getName() + "\n");
         pw.write("Question: " + this.getQuestion() + "\n");
@@ -116,11 +116,18 @@ public class Poll {
         }
         pw.flush();
         pw.close();
-
+        return true;
     }
 
     public void clear() {
-        this.choices = null;
+        if(this.status == State.Running) {
+            this.choices = null;
+        } else if(this.status == State.Released) {
+            this.status = State.Created;
+            this.choices = null;
+            this.name = null;
+            this.question = null;
+        }
     }
 
     public void close() {

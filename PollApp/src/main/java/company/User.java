@@ -66,11 +66,11 @@ public class User {
     }
 
 
-
-
-
-
-
+    public void reset() {
+        this.choiceSelected = null;
+        this.timeSelected = null;
+        this.hasVoted= false;
+    }
 }
 
 

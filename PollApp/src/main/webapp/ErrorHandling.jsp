@@ -24,7 +24,7 @@
 %>
 <br>
 <div class="container-fluid bg-light">
-    <h1> There is an Error </h1>
+    <h1> Error! </h1>
     <br>
     <h2> <% out.println(Error); %></h2>
 </div>
