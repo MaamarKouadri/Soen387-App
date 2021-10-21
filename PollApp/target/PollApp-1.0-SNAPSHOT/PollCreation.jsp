@@ -18,6 +18,7 @@
     request.getSession().setAttribute("vote",false);
     request.getSession().setAttribute("PollManagement",false);
     request.getSession().setAttribute("user",false);
+    request.getSession().setAttribute("updatePoll",false);
 %>
 <jsp:include page="Header.jsp" />
 

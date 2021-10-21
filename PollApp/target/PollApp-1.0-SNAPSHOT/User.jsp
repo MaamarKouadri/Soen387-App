@@ -40,8 +40,8 @@
         <div class="mb-3">
             <label for="UserType">Choose a User type:</label>
             <select  class="form-select" aria-label="Default select example" name="UserType" id="UserType">
-                <option value="RegularUser">RegularUser</option>
-                <option value="PollManager">PollManager</option>
+                <option value="participant">Participant</option>
+                <option value="poll_manager">Poll Manager</option>
             </select>
         </div >
         <div class="d-grid gap-2">

@@ -134,4 +134,9 @@ public class Poll {
         this.clear();
         this.users = null;
     }
+
+    @Override
+    public String toString() {
+        return "Name: " + this.name + "\nQuestion: " + this.question + "\n";
+    }
 }

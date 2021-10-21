@@ -5,10 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import company.Choice;
-import company.PollManager;
-import company.State;
-import company.User;
+import company.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.*;
@@ -62,7 +59,7 @@ public class HelloServlet extends HttpServlet {
 
         // perform appropriate action based on req/res
         if(UserVisited)
-            createUserPage(UserVisited, request, out, response);
+            createUserPage(UserVisited, request, out, response, session);
 
         if(PollVisited)
             createPollPage(PollVisited, request, out, response, session);
@@ -89,7 +86,6 @@ public class HelloServlet extends HttpServlet {
         response.setContentType("text/html");
         HttpSession session = request.getSession();
         // Releasing the Poll here.
-        ((PollManager) session.getAttribute("PollObject")).ReleasePoll();
         PrintWriter out = response.getWriter();
         String data = "Hello";
         //cchange the patth of the file
@@ -118,8 +114,9 @@ public class HelloServlet extends HttpServlet {
 
             String[] ChoiceArr = {"Blue","Red"};
             String[] ChoiceArr2 = {"1","2"};
-            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\maama\\OneDrive\\Bureau\\Soen387-App\\PollApp\\TheResultsFinal.txt"));
+            //BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\maama\\OneDrive\\Bureau\\Soen387-App\\PollApp\\TheResultsFinal.txt"));
 
+            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Nicolo pt 2\\Desktop\\School\\University\\6. FALL2021\\SOEN387\\finalResults.txt"));
             bw.write("This is our results File");
             bw.write("\n");
             bw.write("\n");
@@ -137,8 +134,16 @@ public class HelloServlet extends HttpServlet {
 
             //((PollManager) session.getAttribute("PollObject")).downloadPollDetails();
 
+            // write name and
+            bw.write(Poll.getPoll().toString());
+            out.println(Poll.getPoll().toString());
+            int sum2 = 0;
+            for (int j = 1; j < ChoiceArr2x.length; j++) {
+                sum2+=Integer.parseInt(ChoiceArr2x[j]);
+            }
+
             for (int i = 1; i < ChoiceArrx.length; i++) {
-               double value = Double.parseDouble(ChoiceArr2x[i]) / sum;
+               double value = Double.parseDouble(ChoiceArr2x[i]) / sum2;
                 double roundOff = (double) Math.round(value * 100) / 100;
 
                 bw.write("Choice :" + ChoiceArrx[i] + "  Number of votes received: " + ChoiceArr2x[i] + " Percentage: " + roundOff +" %");
@@ -172,29 +177,33 @@ public class HelloServlet extends HttpServlet {
         // Hello
 
     }
+
     public void destroy() {
     }
 
-    public void createUserPage(boolean UserVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response) throws IOException {
+    public void createUserPage(boolean UserVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
         if(UserVisited &&  request.getParameter("UserID") != null
 
                 && request.getParameter("UserType") != null ){
 
             String ID = request.getParameter("UserID").toString();
             String type  = request.getParameter("UserType").toString();
-            User user1 = new User(type,ID);
-
-            out.println("<html><body>");
-            out.println("Header.jsp");
-            out.println("<h1>" + message + "</h1>");
-            out.println("<h1>" + user1.toString() + "</h1>");
-            out.println("</body></html>");
-
-            Array.add(user1);
+            User currentUser = new User(type, ID);
+            // check if a poll manager already exists in the system
+            for(User u: Array) {
+                if(u.getType().equals(User.POLL_MANAGER) && currentUser.getType().equals(User.POLL_MANAGER)) {
+                    ErrorMessage = "Only one poll manager is allowed.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
+                }
+            }
 
             // only send redirect if no error
-            if(!isError)
+            if(!isError) {
+                Array.add(currentUser);
                 response.sendRedirect("User.jsp");
+            }
         }
     }
 
@@ -205,84 +214,84 @@ public class HelloServlet extends HttpServlet {
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         } else {
-            if( PollVisited && request.getParameter("PollName")!= null
-                    && request.getParameter("PollChoice") != null
-                    && request.getParameter("Description") !=null
-                    && request.getParameter("PollQuestion") != null &&
-                    request.getParameter("PollUserID") != null
-            ) {
-                String PollName = request.getParameter("PollName").toString();
-                String PollChoice  = request.getParameter("PollChoice").toString();
+            String PollID  = request.getParameter("PollUserID").toString();
 
-                String PollID  = request.getParameter("PollUserID").toString();
+            UserArray = Array.toArray(new User[0]);
 
-                String DescriptionChoice  = request.getParameter("Description").toString();
+            boolean isPollManager = false;
 
-                String PollQuestion = request.getParameter("PollQuestion").toString();
-                session.setAttribute("PollQuestion", PollQuestion);
-                String[] arrOfChoices = PollChoice.split(",");
-
-                String[] arrOfDescription = DescriptionChoice.split(",");
-
-                boolean SameSize = false;
-
-                if(arrOfChoices.length == arrOfDescription.length ) {
-                    SameSize = true;
-
-                    session.setAttribute("Choices",PollChoice);
-                    session.setAttribute("DescriptionChoices",DescriptionChoice);
+            // get poll manager access
+            for(User a : UserArray){
+                if(a.getType().contains(User.POLL_MANAGER)
+                        && a.getUniqueId().contentEquals(PollID)
+                ) {
+                    isPollManager = true;
                 }
-                if(SameSize){
-                    ArrayChoice = new ArrayList<>();
-                    for(int i = 0 ; i < arrOfChoices.length ; i++){
+            }
 
-                        Choice c = new Choice(arrOfChoices[i],arrOfDescription[i]);
-                        ArrayChoice.add(c);
+            // check if user is poll manager
+            if (!isPollManager) {
+                ErrorMessage = "You must be a poll manager to create a poll.";
+                session.setAttribute("ErrorMessage",ErrorMessage);
+                response.sendRedirect("ErrorHandling.jsp");
+                isError = true;
+            } else{
+                if( PollVisited && request.getParameter("PollName")!= null
+                        && request.getParameter("PollChoice") != null
+                        && request.getParameter("Description") !=null
+                        && request.getParameter("PollQuestion") != null &&
+                        request.getParameter("PollUserID") != null
+                ) {
+                    String PollName = request.getParameter("PollName").toString();
+                    String PollChoice  = request.getParameter("PollChoice").toString();
+
+
+                    String DescriptionChoice  = request.getParameter("Description").toString();
+
+                    String PollQuestion = request.getParameter("PollQuestion").toString();
+                    session.setAttribute("PollQuestion", PollQuestion);
+                    String[] arrOfChoices = PollChoice.split(",");
+
+                    String[] arrOfDescription = DescriptionChoice.split(",");
+
+                    boolean SameSize = false;
+
+                    if(arrOfChoices.length == arrOfDescription.length ) {
+                        SameSize = true;
+
+                        session.setAttribute("Choices",PollChoice);
+                        session.setAttribute("DescriptionChoices",DescriptionChoice);
+                    }
+                    if(SameSize){
+                        ArrayChoice = new ArrayList<>();
+                        for(int i = 0 ; i < arrOfChoices.length ; i++){
+
+                            Choice c = new Choice(arrOfChoices[i],arrOfDescription[i]);
+                            ArrayChoice.add(c);
+                        }
+
                     }
 
-                }
+                    ChoiceArray = ArrayChoice.toArray(new Choice[0]);
 
-                UserArray = Array.toArray(new User[0]);
+                    String Users = "The Users are " + "\n";
 
-                boolean isPollManager = false;
-                for(User a : UserArray){
-                    if(a.getType().contains("PollManager")
-                            && a.getUniqueId().contentEquals(PollID)
-                    ) {
-                        isPollManager = true;
-
+                    for(User a :UserArray ){
+                        Users += a.toString() +"\n";
                     }
-                }
 
-                ChoiceArray = ArrayChoice.toArray(new Choice[0]);
-
-                String Users = "The Users are " + "\n";
-
-                for(User a :UserArray ){
-
-                    Users += a.toString() +"\n";
-                }
-
-                if(isPollManager) {
                     clearUserData();
                     Poll = new PollManager();
-                    Poll.CreatePoll(PollName,PollQuestion,ChoiceArray,UserArray);
-                    request.getSession().setAttribute("PollObject",Poll);
+                    Poll.CreatePoll(PollName,PollQuestion,ChoiceArray, UserArray);
+                    request.getSession().setAttribute("PollObject", Poll);
                     Poll.RunPoll();
+
                     // only send redirect if no error
                     if(!isError)
                         response.sendRedirect("Vote.jsp");
                 }
-                else
-                {
-                    ErrorMessage = "You must be a poll manager to create a poll.";
-                    session.setAttribute("ErrorMessage",ErrorMessage);
-                    response.sendRedirect("ErrorHandling.jsp");
-                    isError = true;
-                }
             }
         }
-
     }
 
     public void updatePollPage(boolean pollUpdateVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
@@ -334,7 +343,7 @@ public class HelloServlet extends HttpServlet {
 
                 boolean isPollManager = false;
                 for(User a : UserArray){
-                    if(a.getType().contains("PollManager")
+                    if(a.getType().contains(User.POLL_MANAGER)
                             && a.getUniqueId().contentEquals(PollID)
                     ) {
                         isPollManager = true;
@@ -446,6 +455,7 @@ public class HelloServlet extends HttpServlet {
 
         }
     }
+
     public void getPollResults(HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
 
         try {
@@ -501,7 +511,7 @@ public class HelloServlet extends HttpServlet {
 
             boolean isPollManager = false;
             for(User a : UserArray){
-                if(a.getType().contains("PollManager")
+                if(a.getType().contains(User.POLL_MANAGER)
                         && a.getUniqueId().contentEquals(PollID)
                 ) {
                     isPollManager = true;
@@ -528,7 +538,6 @@ public class HelloServlet extends HttpServlet {
             isError = true;
 
         } else {
-
 
             if(HiddenManagementVisited) {
                 String action = request.getParameter("PollAction").toString();
