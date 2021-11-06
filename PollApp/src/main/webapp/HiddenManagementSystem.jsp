@@ -26,6 +26,7 @@
     request.getSession().setAttribute("user",false);
     request.getSession().setAttribute("Poll",false);
     request.getSession().setAttribute("updatePoll",false);
+    request.getSession().setAttribute("accessPoll",false);
 %>
 
 <div class="container-fluid bg-light">

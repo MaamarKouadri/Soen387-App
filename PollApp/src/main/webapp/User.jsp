@@ -26,6 +26,7 @@
     request.getSession().setAttribute("PollManagement",false);
     request.getSession().setAttribute("updatePoll",false);
     request.getSession().setAttribute("displayResults",false);
+    request.getSession().setAttribute("accessPoll",false);
     request.getSession().setAttribute("Choices","");
     request.getSession().setAttribute("DescriptionChoices","");
     %>

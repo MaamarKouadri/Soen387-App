@@ -49,8 +49,7 @@ public class User {
 
     @Override
     public String toString() {
-
-        String UserC ="This is user number   " + uniqueId +" of type " + type;
+        String UserC ="This is user number " + uniqueId +" of type " + type;
         return UserC;
     }
 

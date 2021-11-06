@@ -19,6 +19,7 @@
     request.getSession().setAttribute("Poll",false);
     request.getSession().setAttribute("HiddenManagementSystem",false);
     request.getSession().setAttribute("updatePoll",false);
+    request.getSession().setAttribute("accessPoll",false);
 %>
 <div class="container-fluid bg-light">
     <form  action="PollApp"  method="Post">

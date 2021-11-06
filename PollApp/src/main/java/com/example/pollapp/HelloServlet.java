@@ -55,7 +55,7 @@ public class HelloServlet extends HttpServlet {
         boolean PollManagementVisited =  (boolean)session.getAttribute("PollManagement");
         boolean HiddenManagementVisited =  (boolean)session.getAttribute("HiddenManagementSystem");
         boolean PollUpdateVisited =  (boolean)session.getAttribute("updatePoll");
-        //boolean displayResults =  (boolean)session.getAttribute("displayResults");
+        boolean AccessPollVisited =  (boolean)session.getAttribute("accessPoll");
 
         // perform appropriate action based on req/res
         if(UserVisited)
@@ -67,6 +67,10 @@ public class HelloServlet extends HttpServlet {
         if(PollUpdateVisited)
             updatePollPage(PollUpdateVisited, request, out, response, session);
 
+        if(AccessPollVisited) {
+            accessPoll(VoteVisited, request, out, response, session);
+
+        }
         if(VoteVisited)
             votePage(VoteVisited, request, out, response, session);
 
@@ -181,8 +185,8 @@ public class HelloServlet extends HttpServlet {
     public void destroy() {
     }
 
-    public void createUserPage(boolean UserVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
-        if(UserVisited &&  request.getParameter("UserID") != null
+    public void createUserPage(boolean userVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
+        if(userVisited &&  request.getParameter("UserID") != null
 
                 && request.getParameter("UserType") != null ){
 
@@ -207,7 +211,7 @@ public class HelloServlet extends HttpServlet {
         }
     }
 
-    public void createPollPage(boolean PollVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
+    public void createPollPage(boolean pollVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
         if(Poll.getPollCreated()) {
             ErrorMessage = "Only one poll may be created at a time.";
             session.setAttribute("ErrorMessage",ErrorMessage);
@@ -236,7 +240,7 @@ public class HelloServlet extends HttpServlet {
                 response.sendRedirect("ErrorHandling.jsp");
                 isError = true;
             } else{
-                if( PollVisited && request.getParameter("PollName")!= null
+                if( pollVisited && request.getParameter("PollName")!= null
                         && request.getParameter("PollChoice") != null
                         && request.getParameter("Description") !=null
                         && request.getParameter("PollQuestion") != null &&
@@ -400,14 +404,60 @@ public class HelloServlet extends HttpServlet {
         }
     }
 
-    public void votePage(boolean VoteVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
+
+    public void accessPoll(boolean accessPollVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
+        // TODO vvv current values are hard coded
+        // TODO get poll id from database
+        // TODO get pin id from database
+        String pollID = request.getParameter("PollID").toString();
+        String pin = request.getParameter("PIN").toString();
+
+        // check if poll id and pin id are in database (not yet implemented)
+        if(pollID.length() == 0 || pin.length() == 0) {
+            ErrorMessage = "Poll ID or pin is invalid.";
+            session.setAttribute("ErrorMessage", ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        // data valid
+        } else {
+            // TODO get poll object from database, send to vote.jsp page
+            response.sendRedirect("Vote.jsp");
+        }
+    }
+
+    public void votePage(boolean voteVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
+        /* TODO
+            1.
+            2. store choice into poll database
+            3.
+        */
+        String userVoteChoice = request.getParameter("UserVoteChoice").toString();
+        String pollID = request.getParameter("PollID").toString();
+        String pin = request.getParameter("PIN").toString();
+
+        // get selected choice
+        Choice c = ChoiceArray[0];
+        for(Choice a : ChoiceArray){
+            if(a.getChoice().contentEquals(userVoteChoice))
+                c = a;
+        }
+
+        if(!Poll.vote(pin,c)){
+            ErrorMessage = "Can only vote in running state.";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+
+        response.sendRedirect("Vote.jsp");
+        /*
         if(!Poll.getPollCreated()) {
             ErrorMessage = "Please create poll before voting.";
             session.setAttribute("ErrorMessage",ErrorMessage);
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         }
-        else if (VoteVisited && request.getParameter("VoteUserID")!= null
+        else if (voteVisited && request.getParameter("VoteUserID")!= null
                 &&  request.getParameter("VoteUserType")!= null
         ) {
 
@@ -435,25 +485,9 @@ public class HelloServlet extends HttpServlet {
                 }
             }
 
-            boolean EveryBodyHasVoted = true;
-
-            for(User a : UserArray){
-                if(!a.gethasVoted())
-                    EveryBodyHasVoted = false;
-            }
-
-            if(EveryBodyHasVoted){
-                Poll.ReleasePoll();
-                getPollResults(request, out, response, session);
-            } else{
-
-                out.println("Not EveryBody has Voted");
-                // only send redirect if no error
-                if(!isError)
-                    response.sendRedirect("Vote.jsp");
-            }
-
+            response.sendRedirect("Vote.jsp");
         }
+         */
     }
 
     public void getPollResults(HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
