@@ -13,12 +13,12 @@
 <body>
 <%
     // creating a value held by the session so that the Create Poll Page has been visited
-    request.getSession().setAttribute("Poll",true);
+    request.getSession().setAttribute("updatePoll",true);
+    request.getSession().setAttribute("Poll",false);
     request.getSession().setAttribute("HiddenManagementSystem",false);
     request.getSession().setAttribute("vote",false);
     request.getSession().setAttribute("PollManagement",false);
     request.getSession().setAttribute("user",false);
-    request.getSession().setAttribute("updatePoll",false);
 %>
 <jsp:include page="Header.jsp" />
 
@@ -26,7 +26,7 @@
 <br>
 <div class="container-fluid bg-light">
     <form action="PollApp"  method="Post">
-        <h3 style="text-align: center">Create Poll Form</h3>
+        <h3 style="text-align: center">Update Poll Form</h3>
         <div class="mb-4">
             <label for="exampleInputID" class="form-label">Please enter your pre-defined pass-code:</label>
             <input  name="PollUserID" type="text" class="form-control" id="exampleInputID" >

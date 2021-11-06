@@ -9,6 +9,15 @@ public class PollManager {
     private boolean debug = true;
 
     private Poll poll;
+
+    public Boolean getPollCreated() {
+        return isPollCreated;
+    }
+
+    public void setPollCreated(Boolean pollCreated) {
+        isPollCreated = pollCreated;
+    }
+
     private Boolean isPollCreated = false;
 
     public PollManager() {
@@ -45,22 +54,24 @@ public class PollManager {
      * @param choices array of choices
      * @param users array of users currently participating in poll
      */
-    public void UpdatePoll(String name, String question, Choice[] choices, User[] users) {
+    public boolean UpdatePoll(String name, String question, Choice[] choices, User[] users) {
         if(this.poll.getStatus().equals(State.Running) || this.poll.getStatus().equals(State.Created)) {
             poll = new Poll(name, question, choices, users);
             if(debug)
                 System.out.println("updating poll");
+            return true;
         } else {
             // throw error
             if(debug)
                 System.out.println("error occurred! UpdatePoll()");
+            return false;
         }
     }
 
     /**
      * clears poll data
      */
-    public void ClearPoll() {
+    public boolean ClearPoll() {
         if(this.poll.getStatus().equals(State.Running) || this.poll.getStatus().equals(State.Released)) {
             if(debug)
                 System.out.println("clearing poll");
@@ -71,74 +82,86 @@ public class PollManager {
             if(this.poll.getStatus().equals(State.Released)) {
                 this.poll.setStatus(State.Created);
             }
+            return true;
         } else {
             // throw error
             if(debug)
                 System.out.println("error occurred! ClearPoll()");
+            return false;
         }
     }
 
     /**
      * closes and clears all associated data from poll
      */
-    public void ClosePoll() {
+    public boolean ClosePoll() {
         if(this.poll.getStatus().equals(State.Released)) {
             if(debug)
                 System.out.println("closing poll");
 
             this.poll.close();
+            this.isPollCreated = false;
+            return true;
         } else {
             // throw error
             if(debug)
                 System.out.println("error occurred! ClosePoll()");
+            return false;
         }
     }
 
     /**
      * changes poll status from created to running
      */
-    public void RunPoll() {
-        if(this.poll.getStatus().equals(State.Created)) {
+    public boolean RunPoll() {
+        if(this.poll.getStatus().equals(State.Created) || this.poll.getStatus().equals(State.Running)) {
             if(debug)
                 System.out.println("running poll");
 
             this.poll.setStatus(State.Running);
+            return true;
         } else {
             // throw error
             if(debug)
                 System.out.println("error occurred! RunPoll()");
+            return false;
         }
     }
 
     /**
      * changes poll status from running to released
      */
-    public void ReleasePoll() {
+    public boolean ReleasePoll() {
         if(this.poll.getStatus().equals(State.Running)) {
             if(debug)
                 System.out.println("releasing poll");
 
             this.poll.setStatus(State.Released);
+            return true;
         } else {
             // throw error
             if(debug)
                 System.out.println("error occurred! ReleasePoll()");
+            return false;
         }
     }
 
     /**
      * changes poll status to from released to running
      */
-    public void unreleasePoll() {
+    public boolean unreleasePoll() {
         if(this.poll.getStatus().equals(State.Released)) {
             if(debug)
                 System.out.println("un-releasing poll");
 
             this.poll.setStatus(State.Running);
+            return true;
         } else {
             // throw error
             if(debug)
                 System.out.println("error occurred! unreleasePoll()");
+
+            return false;
         }
     }
 
@@ -147,23 +170,25 @@ public class PollManager {
      * @param participant user submitting choice
      * @param choice participants choice
      */
-    public void vote(User participant, Choice choice) {
+    public boolean vote(User participant, Choice choice) {
         if(this.poll.getStatus().equals(State.Running)) {
             if(debug)
                 System.out.println(participant.getUniqueId() + " selected choice: " + choice.getChoice());
 
             this.poll.vote(participant,choice);
+            return true;
         } else {
             // throw error
             if(debug)
                 System.out.println("error occurred! vote()");
+            return false;
         }
     }
 
     /**
      * gets number of votes per poll question
      */
-    public HashMap<Choice,Integer> getPollResults() {
+    public HashMap<Choice,Integer> getPollResults() throws Exception {
         if(debug)
             System.out.println("getting poll results");
 
@@ -171,6 +196,7 @@ public class PollManager {
         if(!this.poll.getStatus().equals(State.Released)) {
             if(debug)
                 System.out.println("error occurred! getPollResults()");
+            throw new Exception();
         }
 
         return this.poll.getPollResults();
@@ -180,16 +206,17 @@ public class PollManager {
     /**
      * downloads results of poll details
      */
-    public void downloadPollDetails() throws FileNotFoundException {
+    public boolean downloadPollDetails() throws FileNotFoundException {
         if(this.poll.getStatus().equals(State.Released)) {
             if(debug)
                 System.out.println("downloading poll results");
 
-            this.poll.downloadPollResults();
+            return this.poll.downloadPollResults();
         } else {
             // throw error
             if(debug)
                 System.out.println("error occurred! downloadPollDetails()");
+            return false;
         }
     }
 

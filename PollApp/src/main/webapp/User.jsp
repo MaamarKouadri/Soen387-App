@@ -22,13 +22,17 @@
     request.getSession().setAttribute("user",true);
     request.getSession().setAttribute("vote",false);
     request.getSession().setAttribute("Poll",false);
+    request.getSession().setAttribute("HiddenManagementSystem",false);
+    request.getSession().setAttribute("PollManagement",false);
+    request.getSession().setAttribute("updatePoll",false);
+    request.getSession().setAttribute("displayResults",false);
     request.getSession().setAttribute("Choices","");
     request.getSession().setAttribute("DescriptionChoices","");
     %>
 <br>
 <div class="container-fluid bg-light">
     <form  action="PollApp"  method="Post">
-        <h3 style="text-align: center">  Here is the form for the User creation</h3>
+        <h3 style="text-align: center">User Form</h3>
         <div class="mb-4">
             <label for="exampleInputID1" class="form-label">Enter the User ID</label>
             <input  name="UserID" type="text" class="form-control" id="exampleInputID1" aria-describedby="IDHelp">
@@ -36,8 +40,8 @@
         <div class="mb-3">
             <label for="UserType">Choose a User type:</label>
             <select  class="form-select" aria-label="Default select example" name="UserType" id="UserType">
-                <option value="RegularUser">RegularUser</option>
-                <option value="PollManager">PollManager</option>
+                <option value="participant">Participant</option>
+                <option value="poll_manager">Poll Manager</option>
             </select>
         </div >
         <div class="d-grid gap-2">

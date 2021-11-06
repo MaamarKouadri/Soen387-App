@@ -40,17 +40,25 @@
      */
 
     request.getSession().setAttribute("vote",true);
+    request.getSession().setAttribute("PollManagement",false);
+    request.getSession().setAttribute("user",false);
+    request.getSession().setAttribute("Poll",false);
+    request.getSession().setAttribute("HiddenManagementSystem",false);
+    request.getSession().setAttribute("updatePoll",false);
+
 %>
 <jsp:include page="Header.jsp" />
 <br>
 <br>
 <div class="container-fluid bg-light">
     <form action="PollApp"  method="Post">
-        <h3 style="text-align: center">  Here is the form where you can vote</h3>
+        <h3 style="text-align: center">Vote Form</h3>
         <div class="mb-4">
             <label for="exampleInputID1" class="form-label">Enter your User ID</label>
             <input  name="VoteUserID" type="text" class="form-control" id="exampleInputID1" aria-describedby="IDHelp">
         </div>
+
+        <h4>Question: <% if(session.getAttribute("PollQuestion") != null) out.print(session.getAttribute("PollQuestion").toString());%></h4>
         <div class="mb-3">
             <label for="VoteUserType">Choose a choice amongst the ones entered for the poll:</label>
             <select  class="form-select" aria-label="Default select example" name="VoteUserType" id="VoteUserType">
@@ -65,7 +73,10 @@
             <br>
         </div>
     </form>
-
 </div>
+<form action="PollApp"  method="Post">
+    <input type="hidden" name="displayResults" value="true">
+    <button type="submit"  class="btn btn-Success ">Display Results</button>
+</form>
 </body>
 </html>

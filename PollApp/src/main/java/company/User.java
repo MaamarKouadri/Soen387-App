@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 public class User {
     public static String POLL_MANAGER = "poll_manager";
     public static String PARTICIPANT = "participant";
-    private static boolean pollManagerExists = false; // only 1 poll manager allowed
 
     private String uniqueId;
     private String type; // participant/poll_manager
@@ -18,17 +17,7 @@ public class User {
     // constructor
     public User(String type, String uniqueId) {
         this.uniqueId = uniqueId;
-        if(type.equals(POLL_MANAGER)) {
-            if(!pollManagerExists) {
-                this.type = type;
-                pollManagerExists = true;
-            } else {
-                // todo throw error
-                System.out.println("poll manager already exists!");
-            }
-        } else {
-            this.type = type;
-        }
+        this.type = type;
     }
 
     // getters
@@ -66,11 +55,11 @@ public class User {
     }
 
 
-
-
-
-
-
+    public void reset() {
+        this.choiceSelected = null;
+        this.timeSelected = null;
+        this.hasVoted= false;
+    }
 }
 
 

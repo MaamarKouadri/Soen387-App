@@ -14,6 +14,11 @@
 <%
     // creating a value held by the session so that the Create Poll Page has been visited
     request.getSession().setAttribute("Poll",true);
+    request.getSession().setAttribute("HiddenManagementSystem",false);
+    request.getSession().setAttribute("vote",false);
+    request.getSession().setAttribute("PollManagement",false);
+    request.getSession().setAttribute("user",false);
+    request.getSession().setAttribute("updatePoll",false);
 %>
 <jsp:include page="Header.jsp" />
 
@@ -21,28 +26,28 @@
 <br>
 <div class="container-fluid bg-light">
     <form action="PollApp"  method="Post">
-        <h3 style="text-align: center">  Here is the form for the Poll creation</h3>
+        <h3 style="text-align: center">Create Poll Form</h3>
         <div class="mb-4">
-            <label for="exampleInputID" class="form-label">Please enter the PassCode</label>
+            <label for="exampleInputID" class="form-label">Please enter your pre-defined pass-code:</label>
             <input  name="PollUserID" type="text" class="form-control" id="exampleInputID" >
         </div>
         <div class="mb-4">
-            <label for="exampleInputName" class="form-label">Enter the name of the Poll</label>
+            <label for="exampleInputName" class="form-label">Enter the name of the Poll:</label>
             <input  name="PollName" type="text" class="form-control" id="exampleInputName" >
         </div>
 
         <div class="mb-4">
-            <label for="exampleInputQuestion" class="form-label">Enter the question of the Poll</label>
+            <label for="exampleInputQuestion" class="form-label">Enter the question for your Poll:</label>
             <input  name="PollQuestion" type="text" class="form-control" id="exampleInputQuestion" >
         </div>
 
         <div class="mb-4">
-            <label for="exampleInputChoice" class="form-label">Enter the choices for this poll bellow and separate them by a comma  choice1,choice2,choice3 etc</label>
+            <label for="exampleInputChoice" class="form-label">Enter the choices for this poll separated by comma (i.e: choice1,choice2,choice3,etc.):</label>
             <input  name="PollChoice" type="text" class="form-control" id="exampleInputChoice" >
         </div>
 
         <div class="mb-4">
-            <label for="exampleInputDescription" class="form-label">Enter the description of the choices bellow and separate them by a comma  description1,description2,description3 etc </label>
+            <label for="exampleInputDescription" class="form-label">Enter the description of the choices seperated by comma (i.e: description1,description2,description3,etc.) </label>
             <input  name="Description" type="text" class="form-control" id="exampleInputDescription" >
         </div>
 
