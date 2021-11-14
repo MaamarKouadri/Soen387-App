@@ -20,6 +20,8 @@
     request.getSession().setAttribute("HiddenManagementSystem",false);
     request.getSession().setAttribute("updatePoll",false);
     request.getSession().setAttribute("accessPoll",true);
+    request.getSession().setAttribute("listPolls",false);
+    request.getSession().setAttribute("accessListPolls",false);
 %>
 <jsp:include page="Header.jsp" />
 <br>
@@ -33,7 +35,7 @@
         </div>
 
         <div class="mb-4">
-            <label for="exampleInputID2" class="form-label">Enter your PIN#</label>
+            <label for="exampleInputID2" class="form-label">Enter your PIN# (optional)</label>
             <input  name="PIN" type="text" class="form-control" id="exampleInputID2" aria-describedby="IDHelp">
         </div>
 

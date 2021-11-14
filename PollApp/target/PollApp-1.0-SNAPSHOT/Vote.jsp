@@ -27,6 +27,8 @@
     request.getSession().setAttribute("HiddenManagementSystem",false);
     request.getSession().setAttribute("updatePoll",false);
     request.getSession().setAttribute("accessPoll",false);
+    request.getSession().setAttribute("listPolls",false);
+    request.getSession().setAttribute("accessListPolls",false);
 %>
 <jsp:include page="Header.jsp" />
 <br>
@@ -36,8 +38,8 @@
         <h3 style="text-align: center">Vote Form</h3>
         <h4>Question: <% if(session.getAttribute("PollQuestion") != null) out.print(session.getAttribute("PollQuestion").toString());%></h4>
         <div class="mb-3">
-            <label for="VoteUserType">Choose a choice amongst the ones entered for the poll:</label>
-            <select  class="form-select" aria-label="Default select example" name="VoteUserType" id="VoteUserType">
+            <label for="UserVoteChoice">Choose a choice amongst the ones entered for the poll:</label>
+            <select  class="form-select" aria-label="Default select example" name="UserVoteChoice" id="UserVoteChoice">
 
                 <%for (String s: arrODescriptionChoice){%>
                 <option><%out.print(s);%></option>

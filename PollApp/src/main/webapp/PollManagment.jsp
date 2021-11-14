@@ -20,13 +20,17 @@
     request.getSession().setAttribute("HiddenManagementSystem",false);
     request.getSession().setAttribute("updatePoll",false);
     request.getSession().setAttribute("accessPoll",false);
+    request.getSession().setAttribute("listPolls",false);
+    request.getSession().setAttribute("accessListPolls",false);
 %>
 <div class="container-fluid bg-light">
     <form  action="PollApp"  method="Post">
         <h3 style="text-align: center">  Poll Management System</h3>
         <div class="mb-4">
-            <label for="PollManagementSystem" class="form-label">Enter the PassCode </label>
-            <input  name="PollManagementID" type="text" class="form-control" id="PollManagementSystem" aria-describedby="IDHelp">
+            <label for="PollManagementUserID" class="form-label">Enter user ID </label>
+            <input  name="PollManagementUserID" type="text" class="form-control" id="PollManagementUserID" aria-describedby="IDHelp">
+            <label for="PollManagementSystemID" class="form-label">Enter the PollID </label>
+            <input  name="PollManagementSystemID" type="text" class="form-control" id="PollManagementSystemID" aria-describedby="IDHelp">
         </div>
         <div class="d-grid gap-2">
             <button type="submit"  class="btn btn-Success ">Submit</button>
