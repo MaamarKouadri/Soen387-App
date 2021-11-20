@@ -16,7 +16,7 @@
 
 
     <welcome-file-list>
-        <welcome-file> User.jsp </welcome-file>
+        <welcome-file> Test.jsp </welcome-file>
     </welcome-file-list>
 
 </web-app>

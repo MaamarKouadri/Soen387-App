@@ -22,7 +22,8 @@
             <a href="PollCreation.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='PollCreation.jsp'">Create Poll</a>
             <a href="PollCreation.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='PollUpdate.jsp'">Update Poll</a>
             <a href="PollCreation.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='PollManagment.jsp'">Poll Management</a>
-            <a href="Vote.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='Vote.jsp'">Vote</a>
+            <a href="PollCreation.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='AccessListPolls.jsp'">Get List of Polls</a>
+            <a href="Vote.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='AccessPoll.jsp'">Vote</a>
         </div>
     </nav>
 </div>

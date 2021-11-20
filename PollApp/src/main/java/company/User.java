@@ -20,6 +20,10 @@ public class User {
         this.type = type;
     }
 
+    public User( String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
     // getters
     public Choice getChoiceSelected() {
         return this.choiceSelected;
@@ -49,8 +53,7 @@ public class User {
 
     @Override
     public String toString() {
-
-        String UserC ="This is user number   " + uniqueId +" of type " + type;
+        String UserC ="This is user number " + uniqueId +" of type " + type;
         return UserC;
     }
 

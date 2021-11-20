@@ -186,6 +186,26 @@ public class PollManager {
     }
 
     /**
+     * Allows an anonymous user to vote
+     * @param pin unique ID associated to poll
+     * @param choice participants choice
+     */
+    public boolean vote(String pin, Choice choice) {
+        if(this.poll.getStatus().equals(State.Running)) {
+            if(debug)
+                System.out.println(pin + " selected choice: " + choice.getChoice());
+
+            this.poll.vote(pin, choice);
+            return true;
+        } else {
+            // throw error
+            if(debug)
+                System.out.println("error occurred! vote()");
+            return false;
+        }
+    }
+
+    /**
      * gets number of votes per poll question
      */
     public HashMap<Choice,Integer> getPollResults() throws Exception {

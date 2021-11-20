@@ -6,8 +6,7 @@ import java.util.Random;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-	// write your code here
-        testPollManager();
+        testPoll();
     }
 
     static public void testPollManager() throws Exception {

@@ -26,9 +26,12 @@
     request.getSession().setAttribute("PollManagement",false);
     request.getSession().setAttribute("updatePoll",false);
     request.getSession().setAttribute("displayResults",false);
+    request.getSession().setAttribute("accessPoll",false);
+    request.getSession().setAttribute("listPolls",false);
+    request.getSession().setAttribute("accessListPolls",false);
     request.getSession().setAttribute("Choices","");
     request.getSession().setAttribute("DescriptionChoices","");
-    %>
+%>
 <br>
 <div class="container-fluid bg-light">
     <form  action="PollApp"  method="Post">

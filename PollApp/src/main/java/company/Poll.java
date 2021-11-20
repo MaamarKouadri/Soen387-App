@@ -4,10 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Poll {
 
+    private static final int MAX_UID_LENGTH = 10;
+
     // data members
+    private String uid;
     private String name;
     private String question;
     private Choice[] choices;
@@ -17,9 +21,20 @@ public class Poll {
 
     // constructors
     public Poll() {
+        this.uid = generateUID();
         this.status = State.Initialized;
     }
+
+    public Poll(String name, String question, Choice[] choices , String Uid) {
+        this.uid = Uid;
+        this.name = name;
+        this.question = question;
+        this.choices = choices;
+        this.status = State.Created;
+    }
+
     public Poll(String name, String question, Choice[] choices, User[] users) {
+        this.uid = generateUID();
         this.name = name;
         this.question = question;
         this.choices = choices;
@@ -28,6 +43,8 @@ public class Poll {
     }
 
     // getters & setters
+    public String getUid() {return uid;}
+
     public String getName() {
         return name;
     }
@@ -60,6 +77,16 @@ public class Poll {
         this.status = status;
     }
 
+    public String generateUID() {
+        Random r = new Random();
+        StringBuilder str = new StringBuilder();
+        String chars="abcdefghjkmnpqrstvexyz0123456789";
+        for (int i = 0; i < MAX_UID_LENGTH; i++) {
+            str.append(chars.charAt(r.nextInt(chars.length())));
+        }
+        return str.toString();
+    }
+
     /**
      * casts vote of current user
      * @param u current user voting
@@ -81,9 +108,17 @@ public class Poll {
     }
 
     /**
-     *
-     * @return
+     * casts vote of anonymous user
+     * @param pin unique id for user to poll
+     * @param c vote of the anonymous user
      */
+    public void vote(String pin, Choice c) {
+
+    }
+        /**
+         *
+         * @return
+         */
     public HashMap<Choice,Integer> getPollResults(){
         HashMap<Choice,Integer> results = new HashMap<>();
 
@@ -138,5 +173,6 @@ public class Poll {
     @Override
     public String toString() {
         return "Name: " + this.name + "\nQuestion: " + this.question + "\n";
+
     }
 }
