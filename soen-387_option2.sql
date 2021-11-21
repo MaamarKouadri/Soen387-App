@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 19, 2021 at 03:27 AM
+-- Generation Time: Nov 21, 2021 at 03:15 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.12
 
@@ -87,18 +87,20 @@ CREATE TABLE `poll` (
   `PollName` varchar(255) DEFAULT NULL,
   `Question` varchar(255) DEFAULT NULL,
   `Choices` varchar(255) DEFAULT NULL,
-  `PollId` varchar(255) NOT NULL
+  `PollId` varchar(255) NOT NULL,
+  `isDelete` varchar(255) DEFAULT NULL,
+  `timeStamp` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `poll`
 --
 
-INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`) VALUES
-('AirLine', 'What is your Favorite Airline', 'Air Canada, WestJet, Sunwing, Air Transat', 'Air2021'),
-('Dragon Ball Super Favorite Character ', 'Who is your favorite character in Dragon Ball Super', 'Goku, Vegeta, Yamcha', 'DBS2021'),
-('Electric Vehicle', 'What is your favorite electric vehicle company?', 'Tesla, GM, Ford, Audi, Hyundai, Kia', 'ELECTRIC2021'),
-('Vaccine', 'Have you been vaccinated?', 'Yes, No, Prefer not to say', 'VAC2021');
+INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES
+('AirLine', 'What is your Favorite Airline', 'Air Canada, WestJet, Sunwing, Air Transat', 'Air2021', 'No', NULL),
+('Dragon Ball Super Favorite Character ', 'Who is your favorite character in Dragon Ball Super', 'Goku, Vegeta, Yamcha', 'DBS2021', 'No', NULL),
+('Electric Vehicle', 'What is your favorite electric vehicle company?', 'Tesla, GM, Ford, Audi, Hyundai, Kia', 'ELECTRIC2021', 'No', NULL),
+('Vaccine', 'Have you been vaccinated?', 'Yes, No, Prefer not to say', 'VAC2021', 'Yes', NULL);
 
 -- --------------------------------------------------------
 
