@@ -10,6 +10,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import java.io.File;
+import com.google.gson.Gson;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
@@ -24,6 +30,9 @@ public class HelloServlet extends HttpServlet {
     private ArrayList<Choice> ArrayChoice = new ArrayList<Choice>() ;
     private String ErrorMessage;
     private boolean isError;
+
+    private ArrayList<String> votes = new ArrayList<>();
+    private ArrayList<Integer> voteCount = new ArrayList<>();
 
     public void init() {
         isError = false;
@@ -100,12 +109,15 @@ public class HelloServlet extends HttpServlet {
         String[] ChoiceArrx;
         String[] ChoiceArr2x;
         try {
-
             session = request.getSession();
             Choicesx = session.getAttribute("FinalArray").toString();
             ChoiceArrx = Choicesx.split(",");
             Choices2x = session.getAttribute("FinalArray2").toString();
            ChoiceArr2x = Choices2x.split(",");
+
+            xmlMarshel(votes, voteCount);
+            jsonSerialize(votes, voteCount);
+            /*
 
             int size = 0;
             int size2 = 0;
@@ -171,6 +183,7 @@ public class HelloServlet extends HttpServlet {
             out3.close();
             // Releasing the Poll here.
             ((PollManager) session.getAttribute("PollObject")).ClosePoll();
+            */
 
             return;
 
@@ -459,6 +472,9 @@ public class HelloServlet extends HttpServlet {
 
     public void getPollResults(HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
         try {
+            this.votes.clear();
+            this.voteCount.clear();
+
             ArrayList<String> votes = dbManager.getVotes(Poll.getPoll().getUid());
 
             ArrayList<Integer> votesCount = new ArrayList<Integer>();
@@ -485,12 +501,15 @@ public class HelloServlet extends HttpServlet {
             String ChoicesNumberOfTimes ="";
 
             int index=0;
-            for (String vote : votes) {
+            for (String vote : votesUnique) {
                 ChoicesSplit += "," + vote;
-                if(index < ChoicesNumberOfTimes.length())
-                    ChoicesNumberOfTimes += "," + votesCount.get(index);
+                ChoicesNumberOfTimes += "," + votesCount.get(index);
                 index++;
             }
+
+            this.votes = votesUnique;
+            this.voteCount = votesCount;
+
             request.getSession().setAttribute("FinalArray",ChoicesSplit);
             request.getSession().setAttribute("FinalArray2",ChoicesNumberOfTimes);
 
@@ -684,5 +703,44 @@ public class HelloServlet extends HttpServlet {
     public String generatePin() {
         int i = new Random().nextInt(999999) + 100000;
         return Integer.toString(i);
+    }
+
+    public void xmlMarshel(ArrayList<String> votesString, ArrayList<Integer> voteCount) throws JAXBException {
+
+        Vote[] v = new Vote[votesString.size()];
+        int index = 0;
+        for (String vote: votesString) {
+            v[index] = new Vote(vote,voteCount.get(index), (index + 1));
+            index++;
+        }
+        Votes votes = new Votes(v);
+
+        File file = new File("C:\\Users\\Nicolo pt 2\\Desktop\\School\\University\\6. FALL2021\\SOEN387\\git\\Soen387-App\\votes.xml");
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(Votes.class);
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+        // output pretty printed
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        jaxbMarshaller.marshal(votes, file);
+        //jaxbMarshaller.marshal(votes, System.out);
+        System.out.println(votesString.size());
+    }
+
+    public void jsonSerialize(ArrayList<String> votesString, ArrayList<Integer> voteCount) throws IOException {
+        Gson g = new Gson();
+        Map<String,Integer> votes = new HashMap<>();
+        int index=0;
+        for(String vote: votesString) {
+            votes.put(vote,voteCount.get(index));
+            index++;
+        }
+        String output = g.toJson(votes);
+        System.out.println(output);
+        File file = new File("C:\\Users\\Nicolo pt 2\\Desktop\\School\\University\\6. FALL2021\\SOEN387\\git\\Soen387-App\\votes.json");
+        FileWriter fw = new FileWriter(file);
+        fw.write(output);
+        fw.close();
     }
 }

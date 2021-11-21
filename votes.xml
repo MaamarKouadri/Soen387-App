@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<votes>
+    <vote id="1">
+        <count>3</count>
+        <name>Kobe</name>
+    </vote>
+    <vote id="2">
+        <count>1</count>
+        <name>Lebron</name>
+    </vote>
+    <vote id="3">
+        <count>1</count>
+        <name>Steph</name>
+    </vote>
+</votes>
