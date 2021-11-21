@@ -15,14 +15,15 @@ import java.util.Set;
 public class UserDaoImpl implements UserDAO {
 
     @Override
-    public User getUser(int id) {
+    public User getUser(String id) {
         // DB connection
         Connection connection = DBConnection.getConnection();
 
         try {
 
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE UserId=" + id);
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE UserName=?");
+                    stmt.setString(1,id);
+            ResultSet rs = stmt.executeQuery();
 
             if(rs.next())
             {
@@ -263,11 +264,15 @@ public class UserDaoImpl implements UserDAO {
 
         try {
 
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(choiceID) FROM vote  WHERE pollId ="+PollId + " AND choiceID ="+ChoiceID);
-             String NumberOFtimes = rs.getString("choiceID");
-            NumberOfTimesSelected = Integer.parseInt(NumberOFtimes);
-
+            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(choiceID) FROM vote  WHERE pollId =? AND choiceID =?");
+            stmt.setString(1,PollId);
+            stmt.setString(2,ChoiceID);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                String NumberOFtimes = rs.getString("Count(choiceID)");
+                NumberOfTimesSelected = Integer.parseInt(NumberOFtimes);
+            }
+            return NumberOfTimesSelected;
             //com.example.model.User
 //                user = new User();
 //                user.setUserId( rs.getInt("id") );
@@ -299,13 +304,14 @@ public class UserDaoImpl implements UserDAO {
 
     @Override
     // Finds a Poll by ID
-    public Poll getPoll(int id) {
+    public Poll getPoll(String id) {
         Connection connection = DBConnection.getConnection();
 
         try {
 
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * poll users WHERE PollId=" + id);
+            PreparedStatement  stmt = connection.prepareStatement("SELECT * from poll users WHERE PollId=?");
+            stmt.setString(1,id);
+            ResultSet rs = stmt.executeQuery();
 
             if(rs.next())
             {
@@ -344,16 +350,23 @@ public class UserDaoImpl implements UserDAO {
     public boolean verifyPinExistance(String pin) {
         Connection connection = DBConnection.getConnection();
         try {
-            Statement stmt = connection.createStatement();
+            PreparedStatement stmt = connection.prepareStatement("SELECT Count(UserId) FROM haspoll where UserId=?");
             // Write Sql querie
-            ResultSet rs = stmt.executeQuery("SELECT  FROM haspoll where" +
-                    "PollId="+pin);
+            stmt.setString(1,pin);
+            ResultSet rs = stmt.executeQuery();
+          //buu
+            while(rs.next()) {
+                String count = (rs.getString("Count(UserId)"));
+                System.out.println("The pin is " + pin);
+                System.out.println("Count is " + count);
+                int Count = Integer.parseInt(count);
 
-           if((rs.getString("PollId"))== null)
-               return false;
-           else
-               return true;
+                if(Count >0)
+                    return true;
 
+                else
+                    return false;
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -374,16 +387,18 @@ public class UserDaoImpl implements UserDAO {
     public boolean verifyPollIDExistance(String s) {
         Connection connection = DBConnection.getConnection();
         try {
-            Statement stmt = connection.createStatement();
+            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(PollId) FROM poll where PollId=?");
+           stmt.setString(1,s);
             // Write Sql querie
-            ResultSet rs = stmt.executeQuery("SELECT  FROM poll where" +
-                    "PollId="+s);
+            ResultSet rs = stmt.executeQuery();
+           while(rs.next()) {
+               int count = Integer.parseInt(rs.getString("Count(PollId)"));
 
-            if((rs.getString("PollId"))== null)
-                return false;
-            else
-                return true;
-
+               if (count > 0)
+                   return true;
+               else
+                   return false;
+           }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -511,7 +526,7 @@ public class UserDaoImpl implements UserDAO {
 */
     private User extractUserFromResultSet(ResultSet rs) throws SQLException {
 
-      String UserId = Integer.toString(( rs.getInt("UserID") ));
+      String UserId = ( rs.getString("UserID") );
         User user = new User(UserId);
         return user;
     }

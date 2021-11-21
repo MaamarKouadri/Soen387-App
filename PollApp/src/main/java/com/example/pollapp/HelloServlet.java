@@ -64,12 +64,15 @@ public class HelloServlet extends HttpServlet {
                 out.println('\n');
                 out.println("----------");
                 out.println("----------");
-               User a = DatabaseManager.getUser(1);
+               User a = DatabaseManager.getUser("dasdasf");
 
                 out.println("We are Printing the following user ");
                 out.println("----------");
                 out.println("----------");
+                if(a != null)
                 out.println(a);
+                else
+                    out.println("There is not user to print ");
                 out.println("----------");
                 out.println("----------");
 
@@ -117,6 +120,44 @@ public class HelloServlet extends HttpServlet {
                 out.println("----------");
               //  void UpdatePoll(String NewChoiceName, String PollId, String ChoiceName);
                 DatabaseManager.UpdatePoll("Maamar","Air2021","Sunwing");
+
+                out.println(" Testing Number of User choice");
+                out.println("----------");
+                out.println("----------");
+               int NumberOfchoice= DatabaseManager.NumberOfUserChoice("Air2021","2");
+
+               out.println(NumberOfchoice);
+
+                out.println(" Testing GetPoll");
+                out.println("----------");
+                out.println("----------");
+               Poll poll =  DatabaseManager.getPoll("Air2021");
+                out.println(poll);
+
+
+                out.println(" Verifying Pin existance");
+                out.println("----------");
+                out.println("----------");
+
+                boolean verifyPinExistance = DatabaseManager.verifyPinExistance("9");
+                boolean verifyPinExistance2 = DatabaseManager.verifyPinExistance("10");
+
+                out.println("Does pin number 9 exist ? " + verifyPinExistance);
+                out.println("Does pin number 10 exist ? " + verifyPinExistance2);
+
+
+                out.println(" Verifying Poll ID existence");
+                out.println("----------");
+                out.println("----------");
+
+              boolean VerifyPoll1 =   DatabaseManager.verifyPollIDExistance("Air2021");
+
+              boolean VerifyPoll2 =   DatabaseManager.verifyPollIDExistance("sfa");
+
+
+              out.println("Is Air2021 in the database  " + VerifyPoll1);
+
+                out.println("Is sfa in the database  " + VerifyPoll2);
 
             }
             catch(Exception e){
