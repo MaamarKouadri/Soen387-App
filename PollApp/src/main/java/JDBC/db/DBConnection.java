@@ -12,7 +12,7 @@ public class DBConnection {
     // Note : class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'.
     static final String DB_URL = "jdbc:mysql://localhost:3306/";
 
-    static final String DB_NAME = "onepiece";
+    static final String DB_NAME = "poll_db";
     // Database credentialsb
     static final String DB_USER = "root";
     static final String DB_PASSWORD = "";

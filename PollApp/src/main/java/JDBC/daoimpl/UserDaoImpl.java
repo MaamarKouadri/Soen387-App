@@ -22,7 +22,11 @@ public class UserDaoImpl implements UserDAO {
         try {
 
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE UserName=?");
+<<<<<<< HEAD
                     stmt.setString(1,id);
+=======
+            stmt.setString(1,id);
+>>>>>>> fde2a558b36f3802fe7f5f07bd51ccf9fc1c82a8
             ResultSet rs = stmt.executeQuery();
 
             if(rs.next())
