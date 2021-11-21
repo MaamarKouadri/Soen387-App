@@ -95,7 +95,7 @@ public class UserDaoImpl implements UserDAO {
         ArrayList<Poll> ListOfPolls = new ArrayList<Poll>();
         Connection connection = DBConnection.getConnection();
         try {
-            PreparedStatement  stmt = connection.prepareStatement("SELECT pollId FROM `haspoll` WHERE UserId =?");
+            PreparedStatement  stmt = connection.prepareStatement("SELECT pollId FROM `haspoll`,`users` WHERE UserName =? and users.UserId=haspoll.UserId");
             //vegeta
             stmt.setString(1,UserId);
             ResultSet rs = stmt.executeQuery();

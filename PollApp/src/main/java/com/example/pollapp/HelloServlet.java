@@ -700,6 +700,8 @@ public class HelloServlet extends HttpServlet {
             } else {
                 // get list of polls by given user name
                 ArrayList<Poll> polls = dbManager.ListOfPollsByUsers(userName);
+
+                // todo notify ListPolls.jsp of array of polls
                 response.sendRedirect("ListPolls.jsp");
             }
         } catch(Error e) {
@@ -708,17 +710,6 @@ public class HelloServlet extends HttpServlet {
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         }
-
-//        // check if user id is in database (not yet implemented)
-//        if(userID.length() == 0) {
-//            ErrorMessage = "The provided user ID is invalid.";
-//            session.setAttribute("ErrorMessage", ErrorMessage);
-//            response.sendRedirect("ErrorHandling.jsp");
-//            isError = true;
-//        } else {
-//            // todo get list of polls created by user id from database, send to ListPolls.jsp
-//            response.sendRedirect("ListPolls.jsp");
-//        }
     }
 
     public void listPollsPage(boolean listPollsVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) {
