@@ -15,14 +15,15 @@ import java.util.Set;
 public class UserDaoImpl implements UserDAO {
 
     @Override
-    public User getUser(int id) {
+    public User getUser(String id) {
         // DB connection
         Connection connection = DBConnection.getConnection();
 
         try {
 
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM users WHERE UserId=" + id);
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM users WHERE UserName=?");
+            stmt.setString(1,id);
+            ResultSet rs = stmt.executeQuery();
 
             if(rs.next())
             {

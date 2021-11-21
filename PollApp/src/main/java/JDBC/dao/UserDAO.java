@@ -10,7 +10,7 @@ import java.util.Set;
 // com.example.dao.UserDAO (Data Access Object) can do CRUD operations, it can Create, Retreive, Updata, Delete from our table.
 public interface UserDAO {
 
-    User getUser(int id) throws SQLException;
+    User getUser(String userId) throws SQLException;
     Set<User> getAllUsers();
     ArrayList<Poll> ListOfPollsByUsers( String UserId);
     ArrayList<Poll> ListOfActivePolls( );
