@@ -97,7 +97,7 @@ public class UserDaoImpl implements UserDAO {
         ArrayList<Poll> ListOfPolls = new ArrayList<Poll>();
         Connection connection = DBConnection.getConnection();
         try {
-            PreparedStatement  stmt = connection.prepareStatement("SELECT pollId FROM `haspoll`,`users` WHERE UserName =? and users.UserId=haspoll.UserId");
+            PreparedStatement  stmt = connection.prepareStatement("SELECT pollId FROM `haspoll`,`users` WHERE UserName =? and users.UserId=haspoll.UserId and isActive=\"Yes\"");
             //vegeta
             stmt.setString(1,UserId);
             ResultSet rs = stmt.executeQuery();
@@ -317,16 +317,6 @@ public class UserDaoImpl implements UserDAO {
 
             if(rs.next())
             {
-                //com.example.model.User
-//                user = new User();
-//                user.setUserId( rs.getInt("id") );
-//                user.setUsername( rs.getString("username") );
-//                user.setFirstName( rs.getString("first_name") );
-//                user.setLastName( rs.getString("Last_name") );
-//                user.setPassword( rs.getString("pass") );
-//                user.setGender( rs.getString("age") );
-//                user.getStatus( rs.getInt("status") );
-//                return user;
 
                 // It's more convenient to make a separate method to extract user data from result set as we'd use it in many methods.
                 return createPollObject(rs);
@@ -413,9 +403,10 @@ public class UserDaoImpl implements UserDAO {
         return false;
     }
 
+
+    // check whether user created the given poll, and if its active
     @Override
     public boolean isHasPollActive(String pollId, String userId) {
-        // SELECT * FROM hasPoll, users WHERE users.UserId=haspoll.UserId AND isActive= "Yes" AND users.UserName=?AND hasPoll.PollId=?";
         Connection connection = DBConnection.getConnection();
         try {
             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM hasPoll, users WHERE users.UserId=haspoll.UserId AND isActive= \"Yes\" AND users.UserName=?AND hasPoll.PollId=?");
@@ -435,6 +426,54 @@ public class UserDaoImpl implements UserDAO {
             }
 
 
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void getVotes(String pollID) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM vote WHERE pollid=?");
+            stmt.setString(1,pollID);
+
+            ResultSet rs2 = stmt.executeQuery();
+            while(rs2.next()) {
+                // todo: create list of votes
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public boolean hasVotes(String pollID) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement("SELECT COUNT(PollId) FROM vote where PollId=?");
+            stmt.setString(1,pollID);
+
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                int count = Integer.parseInt(rs.getString("Count(PollId)"));
+                return count > 0;
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -493,41 +532,53 @@ public class UserDaoImpl implements UserDAO {
             }
         }
     }
+    @Override
+    public void deleteVotes(String pollID) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement("DELETE FROM vote WHERE PollId=?");
+            stmt.setString(1,pollID);
+            // Write Sql querie
+            stmt.executeUpdate();
 
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
     public void CreatePoll(String pollID, String name,String Choices, String question, String timestamp,String UserName) {
         Connection connection = DBConnection.getConnection();
         try {
             String query = "INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            PreparedStatement stmt = connection.prepareStatement("INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`, `state`) VALUES  (?, ?, ?, ?, ?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1,name);
             stmt.setString(2,question);
             stmt.setString(3,Choices);
             stmt.setString(4,pollID);
             stmt.setString(5,"No");
             stmt.setString(6,timestamp);
+            stmt.setString(7,"Created");
             // Write Sql querie
             stmt.executeUpdate();
 
             ChoiceID++;
-            String ChoiceIDs = Integer.toString(ChoiceID);
             String [] choices = Choices.split(",");
 
             for(String s : choices) {
-
-                insertChoice(pollID, s,ChoiceIDs);
+                insertChoice(pollID, s,String.valueOf(ChoiceID));
+                ChoiceID++;
             }
 
             String UserID ="";
             //  ResultSet rs = stmt.executeQuery();
             int userID = GetUserID(UserName);
             insertHasPoll(pollID,userID);
-            /*
-            while(rs.next()) {
-                ResultSet rs = stmt.executeQuery();
-
-            }
-            */
 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -548,7 +599,6 @@ public class UserDaoImpl implements UserDAO {
         try {
             String query = "INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-
             PreparedStatement stmt = connection.prepareStatement("INSERT INTO `choice` (`PollId`, `ChoiceID`, `choiceName`) VALUES (?, ?, ?)");
             stmt.setString(1,pollID);
             stmt.setString(2,ChoiceID);
@@ -557,12 +607,30 @@ public class UserDaoImpl implements UserDAO {
             // Write Sql querie
             stmt.executeUpdate();
 
-            /*
-            while(rs.next()) {
-                ResultSet rs = stmt.executeQuery();
-
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
             }
-            */
+        }
+    }
+
+    @Override
+    public void insertHasPoll(String pollID, int userID) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            String query = "INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            PreparedStatement stmt = connection.prepareStatement("  INSERT INTO `haspoll` (`PollId`, `UserId`, `isActive`) VALUES (?, ?, ?)");
+            stmt.setString(1,pollID);
+            stmt.setString(2,Integer.toString(userID));
+            stmt.setString(3,"Yes");
+
+            // Write Sql querie
+            stmt.executeUpdate();
 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -573,20 +641,68 @@ public class UserDaoImpl implements UserDAO {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void UpdatePollInstance(String pollID, String name,String Choices, String question, String timestamp, String state) {
+        Connection connection = DBConnection.getConnection();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(" UPDATE poll SET state=?, Question =? ,PollName =? , Choices =? ,timeStamp=?  WHERE PollId =? ");
+            stmt.setString(1,state);
+            stmt.setString(2,question);
+            stmt.setString(3,name);
+            stmt.setString(4,Choices);
+            stmt.setString(5,timestamp);
+            stmt.setString(6,pollID);
+
+            // Write Sql querie
+            stmt.executeUpdate();
+
+            // Updating the choice
+            String [] MyChoices = Choices.split(",");
+            //Make sure than number of choices is same than number of choice ID
+            ArrayList<String> IDs = GetChoiceID(pollID);
+
+            int index =0;
+            for(String c: MyChoices) {
+                //(String PollID, String ChoiceName ,String ChoiceID)
+                UpdateChoiceID(pollID,c,IDs.get(index));
+                index++;
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch( SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+
+
 
     }
 
     @Override
-    public void insertHasPoll(String pollID, int userID) {
+    public void UpdateChoice(String PollID, String ChoiceName ,String ChoiceID) {
+
+        // Createa a function that resturns the Choice ID one by one
         Connection connection = DBConnection.getConnection();
+
+        /*
+         update a poll instance from pollid (question, name, timestamp, isDeleted=True)
+         */
+
         try {
-            String query = "INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+            PreparedStatement stmt = connection.prepareStatement(" UPDATE choice SET choiceName =? Where PollId =? and ChoiceID =? ");
+            stmt.setString(1,ChoiceName);
+            stmt.setString(2,PollID);
+            stmt.setString(3,ChoiceID);
 
-            PreparedStatement stmt = connection.prepareStatement("  INSERT INTO `haspoll` (`PollId`, `UserId`, `isActive`) VALUES (?, ?, ?)");
-            stmt.setString(1,pollID);
-            stmt.setString(2,Integer.toString(userID));
-            stmt.setString(3,"No");
 
             // Write Sql querie
             stmt.executeUpdate();
@@ -607,6 +723,125 @@ public class UserDaoImpl implements UserDAO {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void UpdatePollState(String pollID, String state) {
+        Connection connection = DBConnection.getConnection();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement("UPDATE poll SET state=? WHERE PollId=?");
+            stmt.setString(1,state);
+            stmt.setString(2,pollID);
+
+            // Write Sql querie
+            stmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void UpdatePollisDeleted(String pollID, String isDeleted) {
+        Connection connection = DBConnection.getConnection();
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement("UPDATE poll SET isDelete=? WHERE PollId=?");
+            stmt.setString(1,isDeleted);
+            stmt.setString(2,pollID);
+
+            // Write Sql querie
+            stmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public ArrayList<String> GetChoiceID(String PollID) {
+
+        Connection connection = DBConnection.getConnection();
+        ArrayList<String> IDs = new ArrayList<String>();
+        try {
+
+            PreparedStatement stmt = connection.prepareStatement("Select ChoiceID from choice where PollId=?");
+            stmt.setString(1,PollID);
+            ResultSet rs = stmt.executeQuery();
+
+            boolean end = false;
+            while(rs.next())
+            {
+                String myId = rs.getString("ChoiceID");
+                IDs.add(myId);
+                // It's more convenient to make a separate method to extract user data from result set as we'd use it in many methods.
+            }
+
+            return IDs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        return IDs;
+    }
+
+    public void UpdateChoiceID(String PollID,String Choice, String ChoiceID) {
+
+
+        Connection connection = DBConnection.getConnection();
+
+        /*
+         update a poll instance from pollid (question, name, timestamp, isDeleted=True)
+         */
+
+        try {
+
+            PreparedStatement stmt = connection.prepareStatement(" UPDATE Choice SET choiceName =? WHERE PollId =? AND ChoiceId =?");
+            stmt.setString(1,Choice);
+            stmt.setString(2,PollID);
+            stmt.setString(3,ChoiceID);
+
+            // Write Sql querie
+            stmt.executeUpdate();
+
+            /*
+            while(rs.next()) {
+                ResultSet rs = stmt.executeQuery();
+
+            }
+            */
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+
+
     }
 
     @Override
@@ -816,8 +1051,25 @@ public class UserDaoImpl implements UserDAO {
                  index++;
              }
              String PollId = rs.getString("PollId");
+             String state = rs.getString("state");
+             if(state == null) {
+                 state = "Created";
+             }
 
-              Poll poll = new Poll(PollName,Question,TheChoices,PollId);
+             Poll poll = new Poll(PollName,Question,TheChoices,PollId);
+             switch(state) {
+                 case "Running":
+                     poll.setStatus(State.Running);
+                     break;
+                 case "Created":
+                     poll.setStatus(State.Created);
+                     break;
+                 case "Released":
+                     poll.setStatus(State.Released);
+                     break;
+                 default:
+                     poll.setStatus(State.Created);
+             }
               return poll;
          }
          catch (SQLException e) {

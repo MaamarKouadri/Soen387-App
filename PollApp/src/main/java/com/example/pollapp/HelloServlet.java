@@ -220,88 +220,71 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void createPollPage(boolean pollVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        if(Poll.getPollCreated()) {
-            ErrorMessage = "Only one poll may be created at a time.";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
-        } else {
-            String PollID  = request.getParameter("PollUserID").toString();
+        // only process data once all fields are valid
+        if( pollVisited && request.getParameter("PollName")!= null
+                && request.getParameter("PollChoice") != ""
+                && request.getParameter("Description") != ""
+                && request.getParameter("PollQuestion") != ""
+                && request.getParameter("PollUserID") != ""
+        ) {
+            String userName = request.getParameter("PollUserName").toString();
+            String inputName = request.getParameter("PollName").toString();
+            String inputQuestion = request.getParameter("PollQuestion").toString();
+            String inputChoice = request.getParameter("PollChoice").toString();
+            String inputDescriptionChoice = request.getParameter("Description").toString();
 
-            UserArray = Array.toArray(new User[0]);
+            try {
 
-            boolean isPollManager = false;
+                // get user from database
+                User u = dbManager.getUser(userName);
 
-            // get poll manager access
-            for(User a : UserArray){
-                if(a.getType().contains(User.POLL_MANAGER)
-                        && a.getUniqueId().contentEquals(PollID)
-                ) {
-                    isPollManager = true;
+                // check if user exists
+                if(u != null) {
+                    // data is valid
+                    session.setAttribute("PollQuestion", inputQuestion);
+                    String[] arrOfChoices = inputChoice.split(",");
+                    String[] arrOfDescription = inputDescriptionChoice.split(",");
+
+                    if (arrOfChoices.length == arrOfDescription.length) {
+                        session.setAttribute("Choices", inputChoice);
+                        session.setAttribute("DescriptionChoices", inputDescriptionChoice);
+                    }
+                    ArrayChoice = new ArrayList<>();
+                    for (int i = 0; i < arrOfChoices.length; i++) {
+                        Choice c = new Choice(arrOfChoices[i], arrOfDescription[i]);
+                        ArrayChoice.add(c);
+                    }
+                    Date date = new Date();
+                    String timestamp =  date.toString();
+
+                    ChoiceArray = ArrayChoice.toArray(new Choice[0]);
+                    Poll p = new Poll(inputName,inputQuestion,ChoiceArray);
+                    Poll = new PollManager(p);
+                    request.getSession().setAttribute("PollObject", Poll);
+                    dbManager.CreatePoll(p.getUid(),p.getName(),inputChoice,inputQuestion,timestamp,userName);
+                    response.sendRedirect("PollCreation.jsp");
+                } else {
+                    ErrorMessage = "User does not exist.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
                 }
-            }
-
-            // check if user is poll manager
-            if (!isPollManager) {
-                ErrorMessage = "You must be a poll manager to create a poll.";
+            } catch(Error e) {
+                ErrorMessage = "User does not exist.";
                 session.setAttribute("ErrorMessage",ErrorMessage);
                 response.sendRedirect("ErrorHandling.jsp");
                 isError = true;
-            } else{
-                if( pollVisited && request.getParameter("PollName")!= null
-                        && request.getParameter("PollChoice") != null
-                        && request.getParameter("Description") !=null
-                        && request.getParameter("PollQuestion") != null &&
-                        request.getParameter("PollUserID") != null
-                ) {
-                    String PollName = request.getParameter("PollName").toString();
-                    String PollChoice  = request.getParameter("PollChoice").toString();
-
-
-                    String DescriptionChoice  = request.getParameter("Description").toString();
-
-                    String PollQuestion = request.getParameter("PollQuestion").toString();
-                    session.setAttribute("PollQuestion", PollQuestion);
-                    String[] arrOfChoices = PollChoice.split(",");
-
-                    String[] arrOfDescription = DescriptionChoice.split(",");
-
-                    boolean SameSize = false;
-
-                    if(arrOfChoices.length == arrOfDescription.length ) {
-                        SameSize = true;
-
-                        session.setAttribute("Choices",PollChoice);
-                        session.setAttribute("DescriptionChoices",DescriptionChoice);
-                    }
-                    if(SameSize){
-                        ArrayChoice = new ArrayList<>();
-                        for(int i = 0 ; i < arrOfChoices.length ; i++){
-
-                            Choice c = new Choice(arrOfChoices[i],arrOfDescription[i]);
-                            ArrayChoice.add(c);
-                        }
-
-                    }
-
-                    ChoiceArray = ArrayChoice.toArray(new Choice[0]);
-
-                    String Users = "The Users are " + "\n";
-
-                    for(User a :UserArray ){
-                        Users += a.toString() +"\n";
-                    }
-
-                    clearUserData();
-                    Poll = new PollManager();
-                    Poll.CreatePoll(PollName,PollQuestion,ChoiceArray, UserArray);
-                    request.getSession().setAttribute("PollObject", Poll);
-                }
             }
+        } else {
+            ErrorMessage = "Some input fields are invalid.";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
         }
     }
 
     public void updatePollPage(boolean pollUpdateVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        /*
         if(!Poll.getPollCreated()) {
             ErrorMessage = "Please create poll before updating poll.";
             session.setAttribute("ErrorMessage",ErrorMessage);
@@ -378,7 +361,6 @@ public class HelloServlet extends HttpServlet {
                     out.println("\n");
                     out.println("\n");
                     out.println(DescriptionChoice);
-                    clearUserData();
                     if(!Poll.UpdatePoll(PollName,PollQuestion,ChoiceArray,UserArray)) {
                         ErrorMessage = "Can only update from running or created state.";
                         session.setAttribute("ErrorMessage",ErrorMessage);
@@ -398,6 +380,89 @@ public class HelloServlet extends HttpServlet {
                     isError = true;
                 }
             }
+        }
+        */
+
+        // only process data once all fields are valid
+        if(pollUpdateVisited && request.getParameter("PollName")!= null
+                && request.getParameter("PollChoice") != ""
+                && request.getParameter("Description") != ""
+                && request.getParameter("PollQuestion") != ""
+                && request.getParameter("PollUserID") != ""
+                && request.getParameter("PollID") != "") {
+
+            String userName = request.getParameter("PollUserName").toString();
+            String inputName = request.getParameter("PollName").toString();
+            String inputQuestion = request.getParameter("PollQuestion").toString();
+            String inputChoice = request.getParameter("PollChoice").toString();
+            String inputDescriptionChoice = request.getParameter("Description").toString();
+            String pollId = request.getParameter("PollID").toString();
+
+            try {
+                // get user from database
+                User u = dbManager.getUser(userName);
+
+                // check if user exists
+                if(u != null) {
+
+                    // check if user created the poll
+                    if(dbManager.isHasPollActive(pollId,userName)) {
+
+                        // data is valid
+                        session.setAttribute("PollQuestion", inputQuestion);
+                        String[] arrOfChoices = inputChoice.split(",");
+                        String[] arrOfDescription = inputDescriptionChoice.split(",");
+
+                        // only process data if count(choices) == count(description)
+                        if (arrOfChoices.length == arrOfDescription.length) {
+                            session.setAttribute("Choices", inputChoice);
+                            session.setAttribute("DescriptionChoices", inputDescriptionChoice);
+                            ArrayChoice = new ArrayList<>();
+                            for (int i = 0; i < arrOfChoices.length; i++) {
+                                Choice c = new Choice(arrOfChoices[i], arrOfDescription[i]);
+                                ArrayChoice.add(c);
+                            }
+                            Date date = new Date();
+                            String timestamp =  date.toString();
+
+                            ChoiceArray = ArrayChoice.toArray(new Choice[0]);
+                            Poll p = new Poll(inputName,inputQuestion,ChoiceArray, pollId);
+                            Poll = new PollManager(p);
+                            request.getSession().setAttribute("PollObject", Poll);
+                            State state = Poll.getPoll().getStatus();
+                            dbManager.UpdatePollInstance(p.getUid(),p.getName(),inputChoice,inputQuestion,timestamp, "Created");
+                            dbManager.deleteVotes(p.getUid());
+
+                            response.sendRedirect("PollUpdate.jsp");
+                        } else {
+                            ErrorMessage = "Some input fields are invalid.";
+                            session.setAttribute("ErrorMessage",ErrorMessage);
+                            response.sendRedirect("ErrorHandling.jsp");
+                            isError = true;
+                        }
+                    } else {
+                        ErrorMessage = "User does not have access to given poll.";
+                        session.setAttribute("ErrorMessage", ErrorMessage);
+                        response.sendRedirect("ErrorHandling.jsp");
+                        isError = true;
+                    }
+                } else {
+                    ErrorMessage = "User does not exist.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
+                }
+            } catch(Error e) {
+                ErrorMessage = "User does not exist.";
+                session.setAttribute("ErrorMessage",ErrorMessage);
+                response.sendRedirect("ErrorHandling.jsp");
+                isError = true;
+            }
+        } else {
+            ErrorMessage = "Some input fields are invalid.";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
         }
     }
 
@@ -438,12 +503,22 @@ public class HelloServlet extends HttpServlet {
 
                     response.sendRedirect("Vote.jsp");
 
-                // provided pin # is not in database, throw an error
+                // provided pin # is not in database, it is a request
                 } else {
-                    ErrorMessage = "The provided PIN # is invalid.";
-                    session.setAttribute("ErrorMessage", ErrorMessage);
-                    response.sendRedirect("ErrorHandling.jsp");
-                    isError = true;
+
+                    // pin must be 6 digits long
+                    if(pin.length() == 6) {
+                        Poll = new PollManager(dbManager.getPoll(pollID));
+                        request.getSession().setAttribute("PollObject",Poll);
+                        request.getSession().setAttribute("PIN",pin);
+                        response.sendRedirect("Vote.jsp");
+                    } else {
+                        ErrorMessage = "Pin #'s must be 6 digits long.";
+                        session.setAttribute("ErrorMessage", ErrorMessage);
+                        response.sendRedirect("ErrorHandling.jsp");
+                        isError = true;
+                    }
+
                 }
             } else {
                 // pin was not provided, a new anonymous user is voting, so generate a new pin
@@ -459,38 +534,45 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void votePage(boolean voteVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        String userVoteChoice = request.getParameter("UserVoteChoice").toString();
-        String[] arrChoices = (String[]) session.getAttribute("arrChoices");
-        int choiceId = 0;
 
-        // get choice id from choice array
-        for (int i = 0; i < arrChoices.length; i++) {
+        if(Poll.getPoll().getStatus() == State.Running) {
+            String userVoteChoice = request.getParameter("UserVoteChoice").toString();
+            String[] arrChoices = (String[]) session.getAttribute("arrChoices");
+            String pollID = Poll.getPoll().getUid();
+            String pin = (String) session.getAttribute("PIN");
 
-            // check if given choice is the same, remove whitespace
-            if(arrChoices[i].replaceAll("\\s+","").equals(userVoteChoice.replaceAll("\\s+",""))) {
-                choiceId = i +1;
-                break;
+            int choiceId = 0;
+
+            // get choice id from choice array
+            for (int i = 0; i < arrChoices.length; i++) {
+
+                // check if given choice is the same, remove whitespace
+                if(arrChoices[i].replaceAll("\\s+","").equals(userVoteChoice.replaceAll("\\s+",""))) {
+                    choiceId = i +1;
+                    break;
+                }
             }
-        }
 
-        String pollID = Poll.getPoll().getUid();
-        String pin = (String) session.getAttribute("PIN");
+            // either update or vote based on given pin #
+            if(dbManager.verifyPinExistance(pin,pollID)) {
+                dbManager.updateVote(pollID,pin,choiceId);
+            } else {
+                dbManager.insertVote(pollID,pin,choiceId);
+            }
 
-        if(dbManager.verifyPinExistance(pin,pollID)) {
-            dbManager.updateVote(pollID,pin,choiceId);
+            response.sendRedirect("Vote.jsp");
         } else {
-            dbManager.insertVote(pollID,pin,choiceId);
+            ErrorMessage = "You may only vote from the running state.";
+            session.setAttribute("ErrorMessage", ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
         }
 
-        /*
-            void insertVote(String pollID, String pin, String choiceName);
-            void updateVote(String pollID, String pin, String choiceName);
-         */
-        response.sendRedirect("Vote.jsp");
     }
 
     public void getPollResults(HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
 
+        //todo data from vote table
         try {
             HashMap pollResults = Poll.getPollResults();
 
@@ -581,69 +663,77 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void hiddenManagementPage(boolean HiddenManagementVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(HiddenManagementVisited) {
+            String action = request.getParameter("PollAction").toString();
 
-        if(!Poll.getPollCreated()) {
-            ErrorMessage = "Please create poll before managing poll.";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
+            if(action.contentEquals("Unrelease Poll")){
+                Poll = ((PollManager) session.getAttribute("PollObject"));
+                if(!isError && Poll.unreleasePoll()){
+                    dbManager.UpdatePollState(Poll.getPoll().getUid(),"Running");
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                } else {
+                    ErrorMessage = "Can only unrelease poll in released state.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
+                }
+            }
+            if(action.contentEquals("Run Poll")){
+                Poll = ((PollManager) session.getAttribute("PollObject"));
+                if(!isError && Poll.RunPoll()){
+                    dbManager.UpdatePollState(Poll.getPoll().getUid(),"Running");
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                } else {
+                    ErrorMessage = "Can only run poll from running or created state.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
+                }
+            }
+            if(action.contentEquals("Release Poll")){
+                Poll = ((PollManager) session.getAttribute("PollObject"));
+                if(!isError && Poll.ReleasePoll()){
+                    dbManager.UpdatePollState(Poll.getPoll().getUid(),"Released");
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                } else {
+                    ErrorMessage = "Can only release poll from running state.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
+                }
+            }
+            if(action.contentEquals("Delete Poll")){
+                Poll = ((PollManager) session.getAttribute("PollObject"));
+                if(!isError){
+                    // only delete poll who does not have votes
+                    if(!dbManager.hasVotes(Poll.getPoll().getUid())) {
+                        dbManager.UpdatePollisDeleted(Poll.getPoll().getUid(),"Yes");
+                        response.sendRedirect("HiddenManagementSystem.jsp");
+                    } else {
+                        ErrorMessage = "Can only close poll which has no votes.";
+                        session.setAttribute("ErrorMessage",ErrorMessage);
+                        response.sendRedirect("ErrorHandling.jsp");
+                        isError = true;
+                    }
 
-        } else {
 
-            if(HiddenManagementVisited) {
-                String action = request.getParameter("PollAction").toString();
-
-                if(action.contentEquals("Unrelease Poll")){
-                    if(!isError && ((PollManager) session.getAttribute("PollObject")).unreleasePoll()){
-                        response.sendRedirect("HiddenManagementSystem.jsp");
-                    } else {
-                        ErrorMessage = "Can only unrelease poll in released state.";
-                        session.setAttribute("ErrorMessage",ErrorMessage);
-                        response.sendRedirect("ErrorHandling.jsp");
-                        isError = true;
-                    }
+                } else {
+                    ErrorMessage = "Cannot clear poll from created state.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
                 }
-                if(action.contentEquals("Run Poll")){
-                    if(!isError && ((PollManager) session.getAttribute("PollObject")).RunPoll()){
-                        response.sendRedirect("HiddenManagementSystem.jsp");
-                    } else {
-                        ErrorMessage = "Can only run poll from running or created state.";
-                        session.setAttribute("ErrorMessage",ErrorMessage);
-                        response.sendRedirect("ErrorHandling.jsp");
-                        isError = true;
-                    }
-                }
-                if(action.contentEquals("Release Poll")){
-                    if(!isError && ((PollManager) session.getAttribute("PollObject")).ReleasePoll()){
-                        response.sendRedirect("HiddenManagementSystem.jsp");
-                    } else {
-                        ErrorMessage = "Can only release poll from running state.";
-                        session.setAttribute("ErrorMessage",ErrorMessage);
-                        response.sendRedirect("ErrorHandling.jsp");
-                        isError = true;
-                    }
-                }
-                if(action.contentEquals("Clear Poll")){
-                    if(!isError && ((PollManager) session.getAttribute("PollObject")).ClearPoll()){
-                        clearUserData();
-                        response.sendRedirect("HiddenManagementSystem.jsp");
-                    } else {
-                        ErrorMessage = "Cannot clear poll from created state.";
-                        session.setAttribute("ErrorMessage",ErrorMessage);
-                        response.sendRedirect("ErrorHandling.jsp");
-                        isError = true;
-                    }
-                }
-                if(action.contentEquals("Close Poll")){
-                    if(!isError && ((PollManager) session.getAttribute("PollObject")).ClosePoll()){
-                        clearUserData();
-                        response.sendRedirect("HiddenManagementSystem.jsp");
-                    } else {
-                        ErrorMessage = "Can only close poll from released state.";
-                        session.setAttribute("ErrorMessage",ErrorMessage);
-                        response.sendRedirect("ErrorHandling.jsp");
-                        isError = true;
-                    }
+            }
+            if(action.contentEquals("Close Poll")){
+                Poll = ((PollManager) session.getAttribute("PollObject"));
+                if(!isError && Poll.ClosePoll()){
+                    dbManager.UpdatePollisDeleted(Poll.getPoll().getUid(),"Yes");
+                    response.sendRedirect("HiddenManagementSystem.jsp");
+                } else {
+                    ErrorMessage = "Can only close poll from released state.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
                 }
             }
         }

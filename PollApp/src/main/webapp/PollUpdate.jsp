@@ -31,8 +31,12 @@
     <form action="PollApp"  method="Post">
         <h3 style="text-align: center">Update Poll Form</h3>
         <div class="mb-4">
-            <label for="exampleInputID" class="form-label">Please enter your pre-defined pass-code:</label>
-            <input  name="PollUserID" type="text" class="form-control" id="exampleInputID" >
+            <label for="exampleInputID" class="form-label">Please enter your user id:</label>
+            <input  name="PollUserName" type="text" class="form-control" id="exampleInputID" >
+        </div>
+        <div class="mb-4">
+            <label for="exampleInputID2" class="form-label">Please enter poll id of poll you wish to update:</label>
+            <input  name="PollID" type="text" class="form-control" id="exampleInputID2" >
         </div>
         <div class="mb-4">
             <label for="exampleInputName" class="form-label">Enter the name of the Poll:</label>

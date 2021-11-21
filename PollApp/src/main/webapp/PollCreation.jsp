@@ -32,7 +32,7 @@
         <h3 style="text-align: center">Create Poll Form</h3>
         <div class="mb-4">
             <label for="exampleInputID" class="form-label">Please enter your user id:</label>
-            <input  name="PollUserID" type="text" class="form-control" id="exampleInputID" >
+            <input  name="PollUserName" type="text" class="form-control" id="exampleInputID" >
         </div>
         <div class="mb-4">
             <label for="exampleInputName" class="form-label">Enter the name of the Poll:</label>

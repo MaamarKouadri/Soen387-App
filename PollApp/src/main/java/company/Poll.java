@@ -25,6 +25,14 @@ public class Poll {
         this.status = State.Initialized;
     }
 
+    public Poll(String name, String question, Choice[] choices) {
+        this.uid = generateUID();
+        this.name = name;
+        this.question = question;
+        this.choices = choices;
+        this.status = State.Created;
+    }
+
     public Poll(String name, String question, Choice[] choices , String Uid) {
         this.uid = Uid;
         this.name = name;
@@ -40,6 +48,14 @@ public class Poll {
         this.choices = choices;
         this.status = State.Created;
         this.users = users;
+    }
+
+    public Poll(String name, String question, Choice[] choices, State state) {
+        this.uid = generateUID();
+        this.name = name;
+        this.question = question;
+        this.choices = choices;
+        this.status = state;
     }
 
     // getters & setters

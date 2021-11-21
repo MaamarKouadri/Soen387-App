@@ -44,6 +44,7 @@
                 <option>Unrelease Poll</option>
                 <option>Run Poll</option>
                 <option>Close Poll</option>
+                <option>Delete Poll</option>
             </select>
         </div >
         <div class="d-grid gap-2">

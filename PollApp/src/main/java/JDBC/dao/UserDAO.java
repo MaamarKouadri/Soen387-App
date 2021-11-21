@@ -19,18 +19,27 @@ public interface UserDAO {
     void UpdatePoll(String NewChoiceName, String PollId, String ChoiceName);
     int NumberOfUserChoice( String PollId,String ChoiceID);
 
-    public Poll getPoll(String id);
+    Poll getPoll(String id);
     boolean verifyPinExistance(String pin, String pollid);
     boolean verifyPollIDExistance(String s) ;
     boolean isHasPollActive(String pollId, String userId);
 
+    void getVotes(String pollID);
+    boolean hasVotes(String pollID);
     void insertVote(String pollID, String pin, int choiceId);
     void updateVote(String pollID, String pin, int choiceId);
+    void deleteVotes(String pollID);
 
     void CreatePoll(String pollID, String name,String Choices, String question, String timestamp,String userID);
     void insertChoice(String pollID,String ChoiceName, String ChoiceID);
     void insertHasPoll(String pollID,int userID);
     String FindUserID(String UserName);
+
+    void UpdatePollInstance(String pollID, String name,String Choices, String question, String timestamp, String state);
+    void UpdateChoice(String PollID , String ChoiceName, String ChoiceID );
+    void UpdatePollState(String pollID, String state);
+    void UpdatePollisDeleted(String pollID, String isDeleted);
+    ArrayList<String>  GetChoiceID(String PollID);
 /*
 
 

@@ -105,7 +105,7 @@ public class PollManager {
             if(debug)
                 System.out.println("closing poll");
 
-            this.poll.close();
+            //this.poll.close();
             this.isPollCreated = false;
             return true;
         } else {
