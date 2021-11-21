@@ -18,7 +18,8 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid">
 
-            <a  class="btn btn-dark  btn-lg "  role="button" data-bs-toggle="button" onclick="window.location='User.jsp'">Create User </a>
+            <!--<a  class="btn btn-dark  btn-lg "  role="button" data-bs-toggle="button" onclick="window.location='User.jsp'">Create User </a>-->
+            <a href="login.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='login.jsp'">login</a>
             <a href="PollCreation.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='PollCreation.jsp'">Create Poll</a>
             <a href="PollCreation.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='PollUpdate.jsp'">Update Poll</a>
             <a href="Vote.jsp"  class="btn btn-dark  btn-lg"  role="button" data-bs-toggle="button" onclick="window.location='AccessPoll.jsp'">Access Poll</a>

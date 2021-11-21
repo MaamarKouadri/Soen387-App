@@ -22,6 +22,7 @@
     request.getSession().setAttribute("accessPoll",true);
     request.getSession().setAttribute("listPolls",false);
     request.getSession().setAttribute("accessListPolls",false);
+    request.getSession().setAttribute("login",false);
 %>
 <jsp:include page="Header.jsp" />
 <br>

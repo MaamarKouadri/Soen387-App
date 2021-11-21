@@ -51,6 +51,7 @@ public class HelloServlet extends HttpServlet {
         isError = false;
         UserDaoImpl dbManager = new UserDaoImpl();
 
+        boolean loginVisited =  (boolean)session.getAttribute("login");
         boolean UserVisited  = (boolean)session.getAttribute("user");
         boolean PollVisited  = (boolean)session.getAttribute("Poll");
         boolean VoteVisited  = (boolean)session.getAttribute("vote");
@@ -62,6 +63,9 @@ public class HelloServlet extends HttpServlet {
         boolean ListPollsVisited =  (boolean)session.getAttribute("listPolls");
 
         // perform appropriate action based on req/res
+        if(loginVisited) {
+            loginPage(UserVisited, request, out, response, session, dbManager);
+        }
         if(UserVisited) {
             createUserPage(UserVisited, request, out, response, session, dbManager);
         }
@@ -93,7 +97,6 @@ public class HelloServlet extends HttpServlet {
             listPollsPage(ListPollsVisited, request, out, response, session, dbManager);
         }
     }
-
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
@@ -196,6 +199,33 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void destroy() {
+    }
+
+    public void loginPage(boolean userVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(request.getParameter("btn_login")!= null) {
+            ErrorMessage = "Login not yet implemented!";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+        else if(request.getParameter("btn_sign_up")!= null) {
+            ErrorMessage = "Sign Up not yet implemented!";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+        else if(request.getParameter("btn_edit_account")!= null) {
+            ErrorMessage = "Edit Account not yet implemented!";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        } else {
+            ErrorMessage = "Feature is not yet implemented!";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+
     }
 
     public void createUserPage(boolean userVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {

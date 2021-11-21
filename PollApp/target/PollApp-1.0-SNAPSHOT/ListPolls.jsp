@@ -23,7 +23,7 @@
     request.getSession().setAttribute("accessPoll",false);
     request.getSession().setAttribute("listPolls",true);
     request.getSession().setAttribute("accessListPolls",false);
-
+    request.getSession().setAttribute("login",false);
 %>
 <div class="container-fluid bg-light">
         <h3 style="text-align: center">List of Polls</h3>

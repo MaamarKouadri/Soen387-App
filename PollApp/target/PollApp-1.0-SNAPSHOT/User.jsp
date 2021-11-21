@@ -31,6 +31,7 @@
     request.getSession().setAttribute("accessListPolls",false);
     request.getSession().setAttribute("Choices","");
     request.getSession().setAttribute("DescriptionChoices","");
+    request.getSession().setAttribute("login",false);
 %>
 <br>
 <div class="container-fluid bg-light">

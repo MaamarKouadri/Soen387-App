@@ -22,6 +22,7 @@
     request.getSession().setAttribute("accessPoll",false);
     request.getSession().setAttribute("listPolls",false);
     request.getSession().setAttribute("accessListPolls",false);
+    request.getSession().setAttribute("login",false);
 %>
 <div class="container-fluid bg-light">
     <form  action="PollApp"  method="Post">
