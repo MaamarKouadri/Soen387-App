@@ -440,16 +440,19 @@ public class UserDaoImpl implements UserDAO {
     }
 
     @Override
-    public void getVotes(String pollID) {
+    public ArrayList<String> getVotes(String pollID) {
         Connection connection = DBConnection.getConnection();
+        ArrayList<String> votes = new ArrayList<>();
         try {
-            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM vote WHERE pollid=?");
+            PreparedStatement stmt = connection.prepareStatement("SELECT choiceName FROM vote,choice WHERE vote.pollid=? AND vote.choiceID = choice.ChoiceID AND vote.PollId = choice.PollId");
             stmt.setString(1,pollID);
 
             ResultSet rs2 = stmt.executeQuery();
             while(rs2.next()) {
-                // todo: create list of votes
+                String vote = rs2.getString("choiceName");
+                votes.add(vote);
             }
+            return votes;
 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -460,6 +463,7 @@ public class UserDaoImpl implements UserDAO {
                 e.printStackTrace();
             }
         }
+        return votes;
     }
 
     @Override

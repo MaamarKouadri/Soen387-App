@@ -40,8 +40,8 @@ public class HelloServlet extends HttpServlet {
 
         // reset error
         isError = false;
-
         UserDaoImpl dbManager = new UserDaoImpl();
+
         boolean UserVisited  = (boolean)session.getAttribute("user");
         boolean PollVisited  = (boolean)session.getAttribute("Poll");
         boolean VoteVisited  = (boolean)session.getAttribute("vote");
@@ -65,7 +65,7 @@ public class HelloServlet extends HttpServlet {
         if(AccessPollVisited) {
             accessPoll(VoteVisited, request, out, response, session, dbManager);
         }
-        if(VoteVisited) {
+        if(VoteVisited && request.getParameter("displayResults") == null) {
             votePage(VoteVisited, request, out, response, session, dbManager);
         }
         if(request.getParameter("displayResults") != null) {
@@ -83,14 +83,6 @@ public class HelloServlet extends HttpServlet {
         if(ListPollsVisited) {
             listPollsPage(ListPollsVisited, request, out, response, session, dbManager);
         }
-
-
-//        try {
-//
-//        } catch(Error e) {
-//
-//        }
-
     }
 
 
@@ -195,12 +187,12 @@ public class HelloServlet extends HttpServlet {
 
     public void createUserPage(boolean userVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
         if(userVisited &&  request.getParameter("UserID") != null
-
                 && request.getParameter("UserType") != null ){
 
             String ID = request.getParameter("UserID").toString();
             String type  = request.getParameter("UserType").toString();
             User currentUser = new User(type, ID);
+
             // check if a poll manager already exists in the system
             for(User u: Array) {
                 if(u.getType().equals(User.POLL_MANAGER) && currentUser.getType().equals(User.POLL_MANAGER)) {
@@ -284,104 +276,6 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void updatePollPage(boolean pollUpdateVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        /*
-        if(!Poll.getPollCreated()) {
-            ErrorMessage = "Please create poll before updating poll.";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
-
-        } else {
-            if( pollUpdateVisited && request.getParameter("PollName")!= null
-                    && request.getParameter("PollChoice") != null
-                    && request.getParameter("Description") !=null
-                    && request.getParameter("PollQuestion") != null &&
-                    request.getParameter("PollUserID") != null
-            ) {
-                String PollName = request.getParameter("PollName").toString();
-                String PollChoice  = request.getParameter("PollChoice").toString();
-
-                String PollID  = request.getParameter("PollUserID").toString();
-
-                String DescriptionChoice  = request.getParameter("Description").toString();
-
-                String PollQuestion = request.getParameter("PollQuestion").toString();
-                session.setAttribute("PollQuestion", PollQuestion);
-                String[] arrOfChoices = PollChoice.split(",");
-
-                String[] arrOfDescription = DescriptionChoice.split(",");
-
-                boolean SameSize = false;
-
-                if(arrOfChoices.length == arrOfDescription.length ) {
-                    SameSize = true;
-
-                    session.setAttribute("Choices",PollChoice);
-                    session.setAttribute("DescriptionChoices",DescriptionChoice);
-                }
-                if(SameSize){
-                    ArrayChoice = new ArrayList<>();
-                    for(int i = 0 ; i < arrOfChoices.length ; i++){
-
-                        Choice c = new Choice(arrOfChoices[i],arrOfDescription[i]);
-                        ArrayChoice.add(c);
-                    }
-
-                }
-
-                UserArray = Array.toArray(new User[0]);
-
-                boolean isPollManager = false;
-                for(User a : UserArray){
-                    if(a.getType().contains(User.POLL_MANAGER)
-                            && a.getUniqueId().contentEquals(PollID)
-                    ) {
-                        isPollManager = true;
-
-                    }
-                }
-
-                ChoiceArray = ArrayChoice.toArray(new Choice[0]);
-
-                String Users = "The Users are " + "\n";
-
-                for(User a :UserArray ){
-
-                    Users += a.toString() +"\n";
-                }
-
-                if(isPollManager) {
-                    out.println("Is it the correct Creator ? " + isPollManager);
-                    out.println("The users are " + Users);
-                    out.println("The Poll will be created and will be running");
-                    out.println("Size of Choices " + arrOfChoices.length );
-                    out.println("Size of Description " + arrOfDescription.length);
-                    out.println("Are they the same Size " + SameSize);
-                    out.println(PollChoice);
-                    out.println("\n");
-                    out.println("\n");
-                    out.println(DescriptionChoice);
-                    if(!Poll.UpdatePoll(PollName,PollQuestion,ChoiceArray,UserArray)) {
-                        ErrorMessage = "Can only update from running or created state.";
-                        session.setAttribute("ErrorMessage",ErrorMessage);
-                        response.sendRedirect("ErrorHandling.jsp");
-                        isError = true;
-                    }
-                    request.getSession().setAttribute("PollObject",Poll);
-                    // only send redirect if no error
-                    if(!isError)
-                        response.sendRedirect("Vote.jsp");
-                }
-                else
-                {
-                    ErrorMessage = "You must be a poll manager to create a poll.";
-                    session.setAttribute("ErrorMessage",ErrorMessage);
-                    response.sendRedirect("ErrorHandling.jsp");
-                    isError = true;
-                }
-            }
-        }
-        */
 
         // only process data once all fields are valid
         if(pollUpdateVisited && request.getParameter("PollName")!= null
@@ -473,16 +367,11 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void accessPoll(boolean accessPollVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        // TODO vvv current values are hard coded
-        // TODO get poll id from database
-        // TODO get pin id from database
-
         //If the poll Id exists,  if PIN provided in the database
-        // Function1
         String pollID = request.getParameter("PollID").toString();
         String pin = request.getParameter("PIN").toString();
 
-        // check if poll id is in database (not yet implemented)
+        // check if poll id is in database
         if(!dbManager.verifyPollIDExistance(pollID)) {
             ErrorMessage = "The provided Poll ID is invalid.";
             session.setAttribute("ErrorMessage", ErrorMessage);
@@ -518,16 +407,14 @@ public class HelloServlet extends HttpServlet {
                         response.sendRedirect("ErrorHandling.jsp");
                         isError = true;
                     }
-
                 }
             } else {
                 // pin was not provided, a new anonymous user is voting, so generate a new pin
+                Poll = new PollManager(dbManager.getPoll(pollID));
                 pin = generatePin();
 
-                Poll = new PollManager(dbManager.getPoll(pollID));
                 request.getSession().setAttribute("PollObject",Poll);
                 request.getSession().setAttribute("PIN",pin);
-
                 response.sendRedirect("Vote.jsp");
             }
         }
@@ -535,6 +422,7 @@ public class HelloServlet extends HttpServlet {
 
     public void votePage(boolean voteVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
 
+        // only vote on polls with running state
         if(Poll.getPoll().getStatus() == State.Running) {
             String userVoteChoice = request.getParameter("UserVoteChoice").toString();
             String[] arrChoices = (String[]) session.getAttribute("arrChoices");
@@ -567,28 +455,44 @@ public class HelloServlet extends HttpServlet {
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         }
-
     }
 
-    public void getPollResults(HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
-
-        //todo data from vote table
+    public void getPollResults(HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
         try {
-            HashMap pollResults = Poll.getPollResults();
+            ArrayList<String> votes = dbManager.getVotes(Poll.getPoll().getUid());
+
+            ArrayList<Integer> votesCount = new ArrayList<Integer>();
+
+            int count = 0;
+            ArrayList<String> votesUnique = new ArrayList<String>();
+            for (String vote: votes) {
+                if(!votesUnique.contains(vote)){
+                    votesUnique.add(vote);
+                }
+            }
+
+            for (String vote: votesUnique) {
+                for(String vote2: votes) {
+                    if(vote.contentEquals(vote2)) {
+                        count++;
+                    }
+                }
+                votesCount.add(count);
+                count = 0;
+            }
 
             String ChoicesSplit = "";
             String ChoicesNumberOfTimes ="";
 
-            for ( Object choice : pollResults.keySet() ) {
-                ChoicesSplit += "," + ((Choice) choice).getChoice();
-                ChoicesNumberOfTimes += "," +pollResults.get(((Choice) choice));
+            int index=0;
+            for (String vote : votes) {
+                ChoicesSplit += "," + vote;
+                if(index < ChoicesNumberOfTimes.length())
+                    ChoicesNumberOfTimes += "," + votesCount.get(index);
+                index++;
             }
-
-
             request.getSession().setAttribute("FinalArray",ChoicesSplit);
             request.getSession().setAttribute("FinalArray2",ChoicesNumberOfTimes);
-
-
 
             // only send redirect if no error
             if(!isError)
@@ -608,7 +512,7 @@ public class HelloServlet extends HttpServlet {
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         } else {
-            getPollResults(request, out, response, session);
+            getPollResults(request, out, response, session,dbManager);
         }
     }
 
@@ -715,8 +619,6 @@ public class HelloServlet extends HttpServlet {
                         response.sendRedirect("ErrorHandling.jsp");
                         isError = true;
                     }
-
-
                 } else {
                     ErrorMessage = "Cannot clear poll from created state.";
                     session.setAttribute("ErrorMessage",ErrorMessage);
@@ -777,6 +679,7 @@ public class HelloServlet extends HttpServlet {
 
     public void listPollsPage(boolean listPollsVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) {
     }
+
     // randomly generates a 6 digit pin number
     public String generatePin() {
         int i = new Random().nextInt(999999) + 100000;

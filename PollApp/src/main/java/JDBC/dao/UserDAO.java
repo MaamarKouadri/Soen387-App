@@ -24,7 +24,7 @@ public interface UserDAO {
     boolean verifyPollIDExistance(String s) ;
     boolean isHasPollActive(String pollId, String userId);
 
-    void getVotes(String pollID);
+    ArrayList<String> getVotes(String pollID);
     boolean hasVotes(String pollID);
     void insertVote(String pollID, String pin, int choiceId);
     void updateVote(String pollID, String pin, int choiceId);
