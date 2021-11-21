@@ -10,10 +10,12 @@ import JDBC.db.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class UserDaoImpl implements UserDAO {
-
+    private static final int MAX_UID_LENGTH = 10;
+    static int ChoiceID = 0;
     @Override
     public User getUser(String id) {
         // DB connection
@@ -345,28 +347,27 @@ public class UserDaoImpl implements UserDAO {
 
     @Override
     /**
-     * This function will verify the existance of the Pin
+     * This function will verify the existence of the Pin
      */
-    public boolean verifyPinExistance(String pin) {
+    public boolean verifyPinExistance(String pin, String pollid) {
         Connection connection = DBConnection.getConnection();
         try {
-            PreparedStatement stmt = connection.prepareStatement("SELECT Count(UserId) FROM haspoll where UserId=?");
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM vote WHERE pin = ? AND PollId = ?");
             // Write Sql querie
             stmt.setString(1,pin);
+            stmt.setString(2,pollid);
             ResultSet rs = stmt.executeQuery();
-          //buu
-            while(rs.next()) {
-                String count = (rs.getString("Count(UserId)"));
-                System.out.println("The pin is " + pin);
-                System.out.println("Count is " + count);
-                int Count = Integer.parseInt(count);
 
-                if(Count >0)
+            if(rs.next()) {
+                String pid = rs.getString("PollId");
+                if (pid.length() > 0)
                     return true;
-
                 else
                     return false;
+            } else {
+                return false;
             }
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
@@ -410,6 +411,266 @@ public class UserDaoImpl implements UserDAO {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean isHasPollActive(String pollId, String userId) {
+        // SELECT * FROM hasPoll, users WHERE users.UserId=haspoll.UserId AND isActive= "Yes" AND users.UserName=?AND hasPoll.PollId=?";
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM hasPoll, users WHERE users.UserId=haspoll.UserId AND isActive= \"Yes\" AND users.UserName=?AND hasPoll.PollId=?");
+            stmt.setString(1,userId);
+            stmt.setString(2,pollId);
+            // Write Sql querie
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next()) {
+                String pid = rs.getString("PollId");
+                if (pid.length() <= 0)
+                    return false;
+                else
+                    return true;
+            } else {
+                return false;
+            }
+
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void insertVote(String pollID, String pin, int choiceId) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO vote (PollId,Pin,choiceID) values(?,?,?)");
+            stmt.setString(1,pollID);
+            stmt.setString(2,pin);
+            stmt.setString(3,String.valueOf(choiceId));
+
+            // Write Sql querie
+            stmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void updateVote(String pollID, String pin,  int choiceId) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement("UPDATE vote SET choiceID = ? WHERE Pin = ? AND PollId = ?");
+            stmt.setString(1,String.valueOf(choiceId));
+            stmt.setString(2,pin);
+            stmt.setString(3,pollID);
+
+            // Write Sql querie
+            stmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void CreatePoll(String pollID, String name,String Choices, String question, String timestamp,String UserName) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            String query = "INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1,name);
+            stmt.setString(2,question);
+            stmt.setString(3,Choices);
+            stmt.setString(4,pollID);
+            stmt.setString(5,"No");
+            stmt.setString(6,timestamp);
+            // Write Sql querie
+            stmt.executeUpdate();
+
+            ChoiceID++;
+            String ChoiceIDs = Integer.toString(ChoiceID);
+            String [] choices = Choices.split(",");
+
+            for(String s : choices) {
+
+                insertChoice(pollID, s,ChoiceIDs);
+            }
+
+            String UserID ="";
+            //  ResultSet rs = stmt.executeQuery();
+            int userID = GetUserID(UserName);
+            insertHasPoll(pollID,userID);
+            /*
+            while(rs.next()) {
+                ResultSet rs = stmt.executeQuery();
+
+            }
+            */
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @Override
+    public void insertChoice(String pollID, String ChoiceName, String ChoiceID) {
+
+        Connection connection = DBConnection.getConnection();
+        try {
+            String query = "INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO `choice` (`PollId`, `ChoiceID`, `choiceName`) VALUES (?, ?, ?)");
+            stmt.setString(1,pollID);
+            stmt.setString(2,ChoiceID);
+            stmt.setString(3,ChoiceName);
+
+            // Write Sql querie
+            stmt.executeUpdate();
+
+            /*
+            while(rs.next()) {
+                ResultSet rs = stmt.executeQuery();
+
+            }
+            */
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @Override
+    public void insertHasPoll(String pollID, int userID) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            String query = "INSERT INTO `poll` (`PollName`, `Question`, `Choices`, `PollId`, `isDelete`, `timeStamp`) VALUES  (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+
+            PreparedStatement stmt = connection.prepareStatement("  INSERT INTO `haspoll` (`PollId`, `UserId`, `isActive`) VALUES (?, ?, ?)");
+            stmt.setString(1,pollID);
+            stmt.setString(2,Integer.toString(userID));
+            stmt.setString(3,"No");
+
+            // Write Sql querie
+            stmt.executeUpdate();
+
+            /*
+            while(rs.next()) {
+                ResultSet rs = stmt.executeQuery();
+
+            }
+            */
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public String FindUserID(String UserName) {
+        String query ="SELECT pollId FROM `haspoll`,`users` WHERE UserName =? and users.UserId=haspoll.UserId";
+
+        Connection connection = DBConnection.getConnection();
+        String UserId ="";
+        try {
+
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1,UserName);
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next())
+            {
+                UserId = rs.getString("pollId");
+                return UserId;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        return UserId;
+    }
+
+    public int GetUserID(String Username) {
+
+        int ID =0;
+        Connection connection = DBConnection.getConnection();
+
+        try {
+
+            PreparedStatement stmt = connection.prepareStatement("SELECT UserId FROM users WHERE UserName=?");
+            stmt.setString(1,Username);
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next())
+            {
+
+                int ID2 = rs.getInt("UserId");
+                System.out.println("ID is " + ID);
+                // It's more convenient to make a separate method to extract user data from result set as we'd use it in many methods.
+                return ID2;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        return ID;
     }
 
     /*
@@ -546,21 +807,14 @@ public class UserDaoImpl implements UserDAO {
              String Choices = rs.getString("Choices");
              System.out.println("Choices is " + Choices);
              String [] ChoiceArray =Choices.split(",");
-
              Choice [] TheChoices = new Choice[ChoiceArray.length];
 
              int index =0;
 
-             /*
              for(String a : ChoiceArray){
-
                  TheChoices[index] = new Choice(a,"Choice "+(index+1));
-                 System.out.println("------------------------------------------------");
-                 System.out.println("Choice is " + TheChoices[index] );
-                 System.out.println("------------------------------------------------");
                  index++;
              }
-*/
              String PollId = rs.getString("PollId");
 
               Poll poll = new Poll(PollName,Question,TheChoices,PollId);
@@ -608,4 +862,13 @@ public class UserDaoImpl implements UserDAO {
         return List;
     }
 
+    public String generateUID() {
+        Random r = new Random();
+        StringBuilder str = new StringBuilder();
+        String chars="abcdefghjkmnpqrstvexyz0123456789";
+        for (int i = 0; i < MAX_UID_LENGTH; i++) {
+            str.append(chars.charAt(r.nextInt(chars.length())));
+        }
+        return str.toString();
+    }
 }

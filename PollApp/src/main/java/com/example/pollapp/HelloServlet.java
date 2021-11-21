@@ -35,6 +35,7 @@ public class HelloServlet extends HttpServlet {
         HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
+
         NumberOfVisits++;
 
         // reset error
@@ -82,6 +83,14 @@ public class HelloServlet extends HttpServlet {
         if(ListPollsVisited) {
             listPollsPage(ListPollsVisited, request, out, response, session, dbManager);
         }
+
+
+//        try {
+//
+//        } catch(Error e) {
+//
+//        }
+
     }
 
 
@@ -409,7 +418,7 @@ public class HelloServlet extends HttpServlet {
         String pin = request.getParameter("PIN").toString();
 
         // check if poll id is in database (not yet implemented)
-        if(pollID.length() == 0) {
+        if(!dbManager.verifyPollIDExistance(pollID)) {
             ErrorMessage = "The provided Poll ID is invalid.";
             session.setAttribute("ErrorMessage", ErrorMessage);
             response.sendRedirect("ErrorHandling.jsp");
@@ -418,16 +427,15 @@ public class HelloServlet extends HttpServlet {
         } else {
 
             // check if pin was optionally provided, then user wants to update their vote
-  // Poll =  new PollManager();   Get poll object form poll Id
-            if(pin.length() == 0) {
+            if(pin.length() != 0) {
 
-                // todo check if it exists in database
-                //check if the pin  , exits in vote and check  remove from poll table
-                if(pin.length() == 0) {
+                // user wants to update their vote, check if it exists in database
+                if(dbManager.verifyPinExistance(pin,pollID)) {
 
-                    // TODO pass pin # to vote.jsp
-                    //
-                    // TODO get poll object from database based on current pin #, send to vote.jsp page
+                    Poll = new PollManager(dbManager.getPoll(pollID));
+                    request.getSession().setAttribute("PollObject",Poll);
+                    request.getSession().setAttribute("PIN",pin);
+
                     response.sendRedirect("Vote.jsp");
 
                 // provided pin # is not in database, throw an error
@@ -440,76 +448,45 @@ public class HelloServlet extends HttpServlet {
             } else {
                 // pin was not provided, a new anonymous user is voting, so generate a new pin
                 pin = generatePin();
-                  // Set  question for Poll
-                // TODO get poll object from database, send to vote.jsp page
+
+                Poll = new PollManager(dbManager.getPoll(pollID));
+                request.getSession().setAttribute("PollObject",Poll);
+                request.getSession().setAttribute("PIN",pin);
+
                 response.sendRedirect("Vote.jsp");
             }
         }
     }
 
     public void votePage(boolean voteVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        /* TODO
-            1.
-            2. store choice into poll database
-            3.
-        */
         String userVoteChoice = request.getParameter("UserVoteChoice").toString();
-        String pollID = request.getParameter("PollID").toString();
-        String pin = request.getParameter("PIN").toString();
+        String[] arrChoices = (String[]) session.getAttribute("arrChoices");
+        int choiceId = 0;
 
-        // get selected choice
-        Choice c = ChoiceArray[0];
-        for(Choice a : ChoiceArray){
-            if(a.getChoice().contentEquals(userVoteChoice))
-                c = a;
+        // get choice id from choice array
+        for (int i = 0; i < arrChoices.length; i++) {
+
+            // check if given choice is the same, remove whitespace
+            if(arrChoices[i].replaceAll("\\s+","").equals(userVoteChoice.replaceAll("\\s+",""))) {
+                choiceId = i +1;
+                break;
+            }
         }
 
-        if(!Poll.vote(pin,c)){
-            ErrorMessage = "Can only vote in running state.";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
+        String pollID = Poll.getPoll().getUid();
+        String pin = (String) session.getAttribute("PIN");
+
+        if(dbManager.verifyPinExistance(pin,pollID)) {
+            dbManager.updateVote(pollID,pin,choiceId);
+        } else {
+            dbManager.insertVote(pollID,pin,choiceId);
         }
 
-        response.sendRedirect("Vote.jsp");
         /*
-        if(!Poll.getPollCreated()) {
-            ErrorMessage = "Please create poll before voting.";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
-        }
-        else if (voteVisited && request.getParameter("VoteUserID")!= null
-                &&  request.getParameter("VoteUserType")!= null
-        ) {
-
-            String VotUser = request.getParameter("VoteUserID").toString();
-
-            String VoteUserType = request.getParameter("VoteUserType").toString();
-
-
-            // Now we Iterate through the User array to notify that this user has Voted
-            int index =0;
-            Choice c = ChoiceArray[0];
-            for(Choice a : ChoiceArray){
-                if(a.getChoice().contentEquals(VoteUserType))
-                    c = a;
-            }
-
-            for(User a : UserArray){
-                if(a.getUniqueId().contentEquals(VotUser)) {
-                    if(!Poll.vote(a,c)){
-                        ErrorMessage = "Can only vote in running state.";
-                        session.setAttribute("ErrorMessage",ErrorMessage);
-                        response.sendRedirect("ErrorHandling.jsp");
-                        isError = true;
-                    }
-                }
-            }
-
-            response.sendRedirect("Vote.jsp");
-        }
+            void insertVote(String pollID, String pin, String choiceName);
+            void updateVote(String pollID, String pin, String choiceName);
          */
+        response.sendRedirect("Vote.jsp");
     }
 
     public void getPollResults(HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session) throws IOException {
@@ -554,33 +531,10 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void pollManagementPage(boolean hiddenManagementVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        /*
-        * todo: get poll from database
-         */
 
-        /*
-        if(!Poll.getPollCreated()) {
-            ErrorMessage = "Please create poll before managing poll.";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
-
-        } else {
-        }
-        */
-
-        String userId = request.getParameter("PollManagementID").toString();
+        String userId = request.getParameter("PollManagementUserID").toString();
         String pollId = request.getParameter("PollManagementSystemID").toString();
 
-        /*
-         * todo: check if user id is in database, since every user is now a poll manager
-         */
-
-//        try {
-//
-//        } catch(Error e) {
-//
-//        }
         try {
             User u = dbManager.getUser(userId);
             // check if given user id is invalid
@@ -591,21 +545,32 @@ public class HelloServlet extends HttpServlet {
                 isError = true;
             } else {
                 try {
-                    Poll p = new Poll();
-                    //Poll p = dbManager.getPoll(pollId);
-                    if(p == null) {
-                        ErrorMessage = "The provided user ID is invalid.";
+
+                    Poll = new PollManager(dbManager.getPoll(pollId));
+                    if(Poll.getPoll() == null) {
+                        ErrorMessage = "The provided user ID or poll ID is invalid.";
                         session.setAttribute("ErrorMessage", ErrorMessage);
                         response.sendRedirect("ErrorHandling.jsp");
                         isError = true;
                     } else {
-                        // data is valid
+                        // check if user created the given poll
+                        if(dbManager.isHasPollActive(pollId,userId)) {
+                            // data is valid
+                            request.getSession().setAttribute("PollObject",Poll);
+                            response.sendRedirect("HiddenManagementSystem.jsp");
+                        } else {
+                            ErrorMessage = "User does not have access to given poll.";
+                            session.setAttribute("ErrorMessage", ErrorMessage);
+                            response.sendRedirect("ErrorHandling.jsp");
+                            isError = true;
+                        }
                     }
                 } catch(Error e) {
-
+                    ErrorMessage = "The provided poll ID is invalid.";
+                    session.setAttribute("ErrorMessage", ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
                 }
-
-
             }
         } catch(Error e) {
             ErrorMessage = "The provided user ID is invalid.";
@@ -701,8 +666,16 @@ public class HelloServlet extends HttpServlet {
                 // get list of polls by given user name
                 ArrayList<Poll> polls = dbManager.ListOfPollsByUsers(userName);
 
-                // todo notify ListPolls.jsp of array of polls
-                response.sendRedirect("ListPolls.jsp");
+
+                if(polls.isEmpty()) {
+                    ErrorMessage = "User '" + userName + "' has not created any polls.";
+                    session.setAttribute("ErrorMessage", ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
+                } else {
+                    request.getSession().setAttribute("pollsArray",polls);
+                    response.sendRedirect("ListPolls.jsp");
+                }
             }
         } catch(Error e) {
             ErrorMessage = "The provided user ID is invalid.";

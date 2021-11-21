@@ -24,6 +24,12 @@ public class PollManager {
         poll = new Poll();
     }
 
+    public PollManager(Poll p) {
+
+        isPollCreated= true;
+        poll = p;
+    }
+
     /**
      * initializes the poll
      * @param name name of the poll

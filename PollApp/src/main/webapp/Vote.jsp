@@ -1,4 +1,6 @@
-<%@ page import="company.Choice" %><%--
+<%@ page import="company.Choice" %>
+<%@ page import="company.PollManager" %>
+<%@ page import="java.util.StringJoiner" %><%--
   Created by IntelliJ IDEA.
   User: maama
   Date: 2021-10-16
@@ -13,11 +15,19 @@
 </head>
 <body><%
     // creating a value held by the session so that the vote page has been visited
+    String pin = (String) session.getAttribute("PIN");
     String MyChoices ="";
     String DescriptionChoice ="";
     String[] arrODescriptionChoice;
-
-    MyChoices  = session.getAttribute("Choices").toString();
+    PollManager pm = (PollManager) session.getAttribute("PollObject");
+    Choice[] choices = pm.getPoll().getChoices();
+    StringBuilder sb = new StringBuilder();
+    StringJoiner joiner = new StringJoiner(",");
+    for (Choice c:choices) {
+        joiner.add(c.getChoice());
+    }
+    MyChoices = joiner.toString();
+    //MyChoices  = session.getAttribute("Choices").toString();
     arrODescriptionChoice = MyChoices.split(",");
 
     request.getSession().setAttribute("vote",true);
@@ -36,14 +46,18 @@
 <div class="container-fluid bg-light">
     <form action="PollApp"  method="Post">
         <h3 style="text-align: center">Vote Form</h3>
-        <h4>Question: <% if(session.getAttribute("PollQuestion") != null) out.print(session.getAttribute("PollQuestion").toString());%></h4>
+        <h4>Your PIN #: <% out.print(pin); %></h4>
+        <h4>Poll ID: <% out.print(pm.getPoll().getUid()); %></h4>
+        <h4>Question: <% if(pm.getPoll().getQuestion() != null) out.print(pm.getPoll().getQuestion());%></h4>
         <div class="mb-3">
             <label for="UserVoteChoice">Choose a choice amongst the ones entered for the poll:</label>
             <select  class="form-select" aria-label="Default select example" name="UserVoteChoice" id="UserVoteChoice">
 
                 <%for (String s: arrODescriptionChoice){%>
                 <option><%out.print(s);%></option>
-                <%}%>
+                <%}
+                    session.setAttribute("arrChoices", arrODescriptionChoice);
+                %>
             </select>
         </div >
         <div class="d-grid gap-2">

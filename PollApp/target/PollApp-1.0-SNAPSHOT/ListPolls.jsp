@@ -1,4 +1,5 @@
-<%--
+<%@ page import="company.Poll" %>
+<%@ page import="java.util.ArrayList" %><%--
   Created by IntelliJ IDEA.
   User: maama
   Date: 2021-10-18
@@ -34,7 +35,27 @@
     // Poll question: question
     // Poll choices: choice1,choice2, etc.
     // Poll current State: Running
+    ArrayList<Poll> polls = (ArrayList<Poll>) session.getAttribute("pollsArray");
+    int pollCount=1;
+    for (Poll poll: polls) {
+        out.println("Poll # " + pollCount);
+        out.println("<br>");
+        pollCount++;
+        out.println("Name: " + poll.getName());
+        out.println("<br>");
+        out.println("Question: " + poll.getQuestion());
+        out.println("<br>");
+        for (int i = 0; i < poll.getChoices().length; i++) {
+            out.println("   Choice: " +  (i+1) + ": " + poll.getChoices()[i].getChoice());
+            out.println("<br>");
+        }
+        out.println("Status: " + poll.getStatus());
+        out.println("<br>");
+        out.println("<br>");
+        out.println("<br>");
+    }
 %>
+
 
         </div>
 </div>
