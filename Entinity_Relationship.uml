@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>company</OriginalElement>
+  <nodes>
+    <node x="250.88251366120224" y="220.0">company.User</node>
+    <node x="530.5060203447844" y="309.28778718258764">company.Main</node>
+    <node x="250.8825136612022" y="0.0">company.Choice</node>
+    <node x="1371.2025136942398" y="1474.7085852478838">company..idea</node>
+    <node x="210.95833333333326" y="605.0">company.Poll</node>
+    <node x="10.5" y="275.5">company.State</node>
+    <node x="58.46584699453555" y="982.0">company.PollManager</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="company.Poll" target="company.State" relationship="TO_ONE">
+      <point x="64.0" y="-161.5" />
+      <point x="402.95833333333326" y="553.0" />
+      <point x="129.0" y="553.0" />
+      <point x="39.5" y="95.0" />
+    </edge>
+    <edge source="company.Poll" target="company.Choice" relationship="DEPENDENCY">
+      <point x="-64.0" y="-161.5" />
+      <point x="274.95833333333326" y="583.0" />
+      <point x="179.0" y="583.0" />
+      <point x="179.0" y="199.0" />
+      <point x="189.95833333333326" y="199.0" />
+      <point x="189.95833333333326" y="189.0" />
+      <point x="278.04918032786884" y="189.0" />
+      <point x="-54.33333333333334" y="84.0" />
+    </edge>
+    <edge source="company.Poll" target="company.Choice" relationship="TO_ONE">
+      <point x="64.0" y="-161.5" />
+      <point x="402.95833333333326" y="553.0" />
+      <point x="493.14275956284155" y="553.0" />
+      <point x="493.14275956284155" y="199.0" />
+      <point x="332.3825136612022" y="199.0" />
+      <point x="0.0" y="84.0" />
+    </edge>
+    <edge source="company.Main" target="company.User" relationship="CREATE">
+      <point x="0.0" y="-72.5" />
+      <point x="648.0060203447844" y="1397.0" />
+      <point x="477.45833333333326" y="1397.0" />
+      <point x="477.45833333333326" y="583.0" />
+      <point x="400.04918032786884" y="583.0" />
+      <point x="59.66666666666663" y="150.5" />
+    </edge>
+    <edge source="company.Main" target="company.PollManager" relationship="CREATE">
+      <point x="0.0" y="-72.5" />
+      <point x="648.0060203447844" y="1397.0" />
+      <point x="215.46584699453555" y="1397.0" />
+      <point x="0.0" y="194.5" />
+    </edge>
+    <edge source="company.PollManager" target="company.User" relationship="DEPENDENCY">
+      <point x="-104.66666666666669" y="-194.5" />
+      <point x="110.79918032786887" y="960.0" />
+      <point x="36.309426229508176" y="960.0" />
+      <point x="36.309426229508176" y="950.0" />
+      <point x="200.45833333333326" y="950.0" />
+      <point x="200.45833333333326" y="543.0" />
+      <point x="280.7158469945356" y="543.0" />
+      <point x="-59.66666666666663" y="150.5" />
+    </edge>
+    <edge source="company.Poll" target="company.State" relationship="DEPENDENCY">
+      <point x="-64.0" y="-161.5" />
+      <point x="274.95833333333326" y="583.0" />
+      <point x="179.0" y="583.0" />
+      <point x="179.0" y="563.0" />
+      <point x="50.0" y="563.0" />
+      <point x="-39.5" y="95.0" />
+    </edge>
+    <edge source="company.PollManager" target="company.Choice" relationship="DEPENDENCY">
+      <point x="-104.66666666666669" y="-194.5" />
+      <point x="110.79918032786887" y="960.0" />
+      <point x="36.309426229508176" y="960.0" />
+      <point x="36.309426229508176" y="950.0" />
+      <point x="0.0" y="950.0" />
+      <point x="0.0" y="199.0" />
+      <point x="189.95833333333326" y="199.0" />
+      <point x="189.95833333333326" y="189.0" />
+      <point x="278.04918032786884" y="189.0" />
+      <point x="-54.33333333333334" y="84.0" />
+    </edge>
+    <edge source="company.PollManager" target="company.Poll" relationship="TO_ONE">
+      <point x="0.0" y="-194.5" />
+      <point x="215.46584699453555" y="960.0" />
+      <point x="274.95833333333326" y="960.0" />
+      <point x="-64.0" y="161.5" />
+    </edge>
+    <edge source="company.Poll" target="company.User" relationship="DEPENDENCY">
+      <point x="-64.0" y="-161.5" />
+      <point x="274.95833333333326" y="583.0" />
+      <point x="179.0" y="583.0" />
+      <point x="179.0" y="573.0" />
+      <point x="200.45833333333326" y="573.0" />
+      <point x="200.45833333333326" y="543.0" />
+      <point x="280.7158469945356" y="543.0" />
+      <point x="-59.66666666666663" y="150.5" />
+    </edge>
+    <edge source="company.User" target="company.Choice" relationship="TO_ONE">
+      <point x="44.75" y="-150.5" />
+      <point x="385.1325136612022" y="194.0" />
+      <point x="332.3825136612022" y="194.0" />
+      <point x="0.0" y="84.0" />
+    </edge>
+    <edge source="company.Main" target="company.Choice" relationship="CREATE">
+      <point x="0.0" y="-72.5" />
+      <point x="648.0060203447844" y="1397.0" />
+      <point x="504.14275956284155" y="1397.0" />
+      <point x="504.14275956284155" y="189.0" />
+      <point x="386.7158469945356" y="189.0" />
+      <point x="54.33333333333337" y="84.0" />
+    </edge>
+    <edge source="company.PollManager" target="company.Poll" relationship="CREATE">
+      <point x="104.66666666666669" y="-194.5" />
+      <point x="320.1325136612022" y="960.0" />
+      <point x="334.2260928961749" y="960.0" />
+      <point x="334.2260928961749" y="950.0" />
+      <point x="402.95833333333326" y="950.0" />
+      <point x="64.0" y="161.5" />
+    </edge>
+    <edge source="company.Main" target="company.Poll" relationship="CREATE">
+      <point x="0.0" y="-72.5" />
+      <point x="648.0060203447844" y="1397.0" />
+      <point x="382.9658469945356" y="1397.0" />
+      <point x="382.9658469945356" y="960.0" />
+      <point x="334.2260928961749" y="960.0" />
+      <point x="334.2260928961749" y="950.0" />
+      <point x="402.95833333333326" y="950.0" />
+      <point x="64.0" y="161.5" />
+    </edge>
+    <edge source="company.Poll" target="company.User" relationship="TO_ONE">
+      <point x="64.0" y="-161.5" />
+      <point x="402.95833333333326" y="553.0" />
+      <point x="340.3825136612022" y="553.0" />
+      <point x="0.0" y="150.5" />
+    </edge>
+    <edge source="company.PollManager" target="company.State" relationship="DEPENDENCY">
+      <point x="-104.66666666666669" y="-194.5" />
+      <point x="110.79918032786887" y="960.0" />
+      <point x="36.309426229508176" y="960.0" />
+      <point x="36.309426229508176" y="950.0" />
+      <point x="50.0" y="950.0" />
+      <point x="-39.5" y="95.0" />
+    </edge>
+    <edge source="company.User" target="company.Choice" relationship="DEPENDENCY">
+      <point x="-44.75" y="-150.5" />
+      <point x="295.6325136612022" y="199.0" />
+      <point x="189.95833333333326" y="199.0" />
+      <point x="189.95833333333326" y="189.0" />
+      <point x="278.04918032786884" y="189.0" />
+      <point x="-54.33333333333334" y="84.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.5207808564231738" showDependencies="true" x="367.0" y="783.9999999999999" />
+  <SelectedNodes>
+    <node>company..idea</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
