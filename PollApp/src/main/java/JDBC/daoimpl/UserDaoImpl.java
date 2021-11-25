@@ -440,6 +440,39 @@ public class UserDaoImpl implements UserDAO {
     }
 
     @Override
+    public boolean isDeleted(String pollId) {
+        Connection connection = DBConnection.getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM poll WHERE PollId=? AND isDelete= \"Yes\"");
+            stmt.setString(1,pollId);
+            // Write Sql querie
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next()) {
+                String pid = rs.getString("isDelete");
+                if (pid.length() <= 0)
+                    return false;
+                else
+                    return true;
+            } else {
+                return false;
+            }
+
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public ArrayList<String> getVotes(String pollID) {
         Connection connection = DBConnection.getConnection();
         ArrayList<String> votes = new ArrayList<>();

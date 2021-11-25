@@ -23,6 +23,7 @@ public interface UserDAO {
     boolean verifyPinExistance(String pin, String pollid);
     boolean verifyPollIDExistance(String s) ;
     boolean isHasPollActive(String pollId, String userId);
+    boolean isDeleted(String pollId);
 
     ArrayList<String> getVotes(String pollID);
     boolean hasVotes(String pollID);

@@ -484,14 +484,22 @@ public class HelloServlet extends HttpServlet {
                 }
             }
 
-            // either update or vote based on given pin #
-            if(dbManager.verifyPinExistance(pin,pollID)) {
-                dbManager.updateVote(pollID,pin,choiceId);
+            if(dbManager.isDeleted(pollID)) {
+                ErrorMessage = "Poll has been deleted.";
+                session.setAttribute("ErrorMessage", ErrorMessage);
+                response.sendRedirect("ErrorHandling.jsp");
+                isError = true;
             } else {
-                dbManager.insertVote(pollID,pin,choiceId);
+                // either update or vote based on given pin #
+                if(dbManager.verifyPinExistance(pin,pollID)) {
+                    dbManager.updateVote(pollID,pin,choiceId);
+                } else {
+                    dbManager.insertVote(pollID,pin,choiceId);
+                }
+
+                response.sendRedirect("Vote.jsp");
             }
 
-            response.sendRedirect("Vote.jsp");
         } else {
             ErrorMessage = "You may only vote from the running state.";
             session.setAttribute("ErrorMessage", ErrorMessage);
@@ -555,13 +563,20 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void displayResultsPage(boolean displayResults, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        if(!Poll.getPollCreated()) {
-            ErrorMessage = "Please create poll before voting.";
+        if(Poll.getPoll().getStatus() != State.Released) {
+            ErrorMessage = "Poll must be released before viewing results.";
             session.setAttribute("ErrorMessage",ErrorMessage);
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         } else {
-            getPollResults(request, out, response, session,dbManager);
+            if(dbManager.isDeleted(Poll.getPoll().getUid())) {
+                ErrorMessage = "Poll has been deleted.";
+                session.setAttribute("ErrorMessage", ErrorMessage);
+                response.sendRedirect("ErrorHandling.jsp");
+                isError = true;
+            } else {
+                getPollResults(request, out, response, session,dbManager);
+            }
         }
     }
 
@@ -591,8 +606,16 @@ public class HelloServlet extends HttpServlet {
                         // check if user created the given poll
                         if(dbManager.isHasPollActive(pollId,userId)) {
                             // data is valid
-                            request.getSession().setAttribute("PollObject",Poll);
-                            response.sendRedirect("HiddenManagementSystem.jsp");
+
+                            if(dbManager.isDeleted(Poll.getPoll().getUid())) {
+                                ErrorMessage = "Poll has been deleted.";
+                                session.setAttribute("ErrorMessage", ErrorMessage);
+                                response.sendRedirect("ErrorHandling.jsp");
+                                isError = true;
+                            } else {
+                                request.getSession().setAttribute("PollObject",Poll);
+                                response.sendRedirect("HiddenManagementSystem.jsp");
+                            }
                         } else {
                             ErrorMessage = "User does not have access to given poll.";
                             session.setAttribute("ErrorMessage", ErrorMessage);
@@ -714,6 +737,7 @@ public class HelloServlet extends HttpServlet {
                     response.sendRedirect("ErrorHandling.jsp");
                     isError = true;
                 } else {
+
                     request.getSession().setAttribute("pollsArray",polls);
                     response.sendRedirect("ListPolls.jsp");
                 }

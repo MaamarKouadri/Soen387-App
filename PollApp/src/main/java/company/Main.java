@@ -6,7 +6,21 @@ import java.util.Random;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        testPoll();
+        // write your code here
+        testPollManager();
+        testPasswordHash();
+    }
+
+    static public void testPasswordHash() {
+        User a = new User("User1","116");
+
+        String Password ="Busquet";
+
+        String cryptedPassword =  a.HashFunction(Password);
+
+        System.out.println("Original Password: " +  Password);
+
+        System.out.println("Crypted Password: " +  cryptedPassword);
     }
 
     static public void testPollManager() throws Exception {
