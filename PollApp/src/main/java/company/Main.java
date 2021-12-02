@@ -1,15 +1,65 @@
 package company;
 
+import com.pollapp.jpa.UserJPA;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 import java.io.FileNotFoundException;
 import java.util.Random;
 
 public class Main {
 
+    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("PollApp");
+
     public static void main(String[] args) throws Exception {
         // write your code here
-        testPollManager();
-        testPasswordHash();
+        //testPollManager();
+        //testPasswordHash();
+        testEntityManagerFactory();
     }
+
+    static public void testEntityManagerFactory() {
+        create(23,"swag","swag@email.com");
+        ENTITY_MANAGER_FACTORY.close();
+    }
+
+    static public void create(long id, String userName, String email) {
+
+        EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            // Get a transaction
+            transaction = manager.getTransaction();
+
+            // Begin the transaction
+            transaction.begin();
+
+            // Create a new userJPA object
+            UserJPA user = new UserJPA();
+            user.setId(id);
+            user.setUserName(userName);
+            user.setEmail(email);
+
+            // Save the userJPA object
+            manager.persist(user);
+
+            // Commit the transaction
+            transaction.commit();
+        } catch (Exception ex) {
+            // If there are any exceptions, roll back the changes
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            // Print the Exception
+            ex.printStackTrace();
+        } finally {
+            // Close the EntityManager
+            manager.close();
+        }
+    }
+
 
     static public void testPasswordHash() {
         User a = new User("User1","116");
