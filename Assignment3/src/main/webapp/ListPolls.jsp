@@ -24,6 +24,8 @@
     request.getSession().setAttribute("listPolls",true);
     request.getSession().setAttribute("accessListPolls",false);
     request.getSession().setAttribute("login",false);
+    request.getSession().setAttribute("signUpAccount",false);
+    request.getSession().setAttribute("forgotPasswordAccount",false);
 %>
 <div class="container-fluid bg-light">
         <h3 style="text-align: center">List of Polls</h3>

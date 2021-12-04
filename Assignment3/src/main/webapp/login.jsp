@@ -21,6 +21,9 @@
     request.getSession().setAttribute("accessPoll",false);
     request.getSession().setAttribute("listPolls",false);
     request.getSession().setAttribute("accessListPolls",false);
+    request.getSession().setAttribute("signUpAccount",false);
+    request.getSession().setAttribute("forgotPasswordAccount",false);
+
 %>
 <body>
 <jsp:include page="Header.jsp" />
@@ -45,7 +48,7 @@
             <br>
         </div>
         <div class="d-grid gap-2">
-            <input type="submit" name="btn_edit_account" class="form-control btn btn-dark" id="btn_edit_account" value="Edit Account">
+            <input type="submit" name="btn_forgot_password" class="form-control btn btn-dark" id="btn_forgot_password" value="Forgot Password?">
             <br>
         </div>
     </form>

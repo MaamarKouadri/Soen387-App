@@ -47,6 +47,8 @@ public class HelloServlet extends HttpServlet {
         UserDaoImpl dbManager = new UserDaoImpl();
 
         boolean loginVisited =  (boolean)session.getAttribute("login");
+        boolean forgotPasswordAccount =  (boolean)session.getAttribute("forgotPasswordAccount");
+        boolean signUpAccount =  (boolean)session.getAttribute("signUpAccount");
         boolean UserVisited  = (boolean)session.getAttribute("user");
         boolean PollVisited  = (boolean)session.getAttribute("Poll");
         boolean VoteVisited  = (boolean)session.getAttribute("vote");
@@ -59,7 +61,13 @@ public class HelloServlet extends HttpServlet {
 
         // perform appropriate action based on req/res
         if(loginVisited) {
-            loginPage(UserVisited, request, out, response, session, dbManager);
+            loginPage(loginVisited, request, out, response, session, dbManager);
+        }
+        if(forgotPasswordAccount) {
+            forgotPasswordAccountPage(forgotPasswordAccount, request, out, response, session, dbManager);
+        }
+        if(signUpAccount) {
+            signUpAccountPage(signUpAccount, request, out, response, session, dbManager);
         }
         if(UserVisited) {
             createUserPage(UserVisited, request, out, response, session, dbManager);
@@ -90,6 +98,24 @@ public class HelloServlet extends HttpServlet {
         }
         if(ListPollsVisited) {
             listPollsPage(ListPollsVisited, request, out, response, session, dbManager);
+        }
+    }
+
+    public void signUpAccountPage(boolean signUpAccount, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(request.getParameter("btn_sign_up")!= null) {
+            ErrorMessage = "Sign Up not yet implemented!";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+    }
+
+    public void forgotPasswordAccountPage(boolean forgotPasswordAccount, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(request.getParameter("btn_forgot_password")!= null) {
+            ErrorMessage = "Forgot Password not yet implemented!";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
         }
     }
 
@@ -194,7 +220,7 @@ public class HelloServlet extends HttpServlet {
     public void destroy() {
     }
 
-    public void loginPage(boolean userVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+    public void loginPage(boolean loginVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
         if(request.getParameter("btn_login")!= null) {
             ErrorMessage = "Login not yet implemented!";
             session.setAttribute("ErrorMessage",ErrorMessage);
@@ -202,18 +228,12 @@ public class HelloServlet extends HttpServlet {
             isError = true;
         }
         else if(request.getParameter("btn_sign_up")!= null) {
-            ErrorMessage = "Sign Up not yet implemented!";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
+            response.sendRedirect("SignUpAccount.jsp");
         }
-        else if(request.getParameter("btn_edit_account")!= null) {
-            ErrorMessage = "Edit Account not yet implemented!";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
+        else if(request.getParameter("btn_forgot_password")!= null) {
+            response.sendRedirect("ForgotPasswordAccount.jsp");
         } else {
-            ErrorMessage = "Feature is not yet implemented!";
+            ErrorMessage = "Invalid input.";
             session.setAttribute("ErrorMessage",ErrorMessage);
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
