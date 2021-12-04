@@ -8,10 +8,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Login page</title>
+    <title>Change password page</title>
 </head>
 <%
-    request.getSession().setAttribute("login",true);
+    request.getSession().setAttribute("login",false);
     request.getSession().setAttribute("PollManagement",false);
     request.getSession().setAttribute("user",false);
     request.getSession().setAttribute("vote",false);
@@ -21,35 +21,22 @@
     request.getSession().setAttribute("accessPoll",false);
     request.getSession().setAttribute("listPolls",false);
     request.getSession().setAttribute("accessListPolls",false);
+    request.getSession().setAttribute("changePasswordAccount",true);
     request.getSession().setAttribute("signUpAccount",false);
     request.getSession().setAttribute("forgotPasswordAccount",false);
-    request.getSession().setAttribute("changePasswordAccount",false);
-
 %>
 <body>
 <jsp:include page="Header.jsp" />
 
 <div class="container-fluid bg-light">
     <form action="PollApp"  method="Post">
-        <h3 style="text-align: center">Login Form</h3>
+        <h3 style="text-align: center">Sign Up Form</h3>
         <div class="mb-4">
-            <label for="username" class="form-label">Username:</label>
-            <input  name="username" type="text" class="form-control" id="username" >
-        </div>
-        <div class="mb-4">
-            <label for="password" class="form-label">Password:</label>
-            <input type="password" name="password" class="form-control" id="password" >
+            <label for="password" class="form-label">Passsword:</label>
+            <input  name="password" type="text" class="form-control" id="password" >
         </div>
         <div class="d-grid gap-2">
-            <input type="submit" name="btn_login" class="form-control btn btn-dark" id="btn_login" value="Login">
-            <br>
-        </div>
-        <div class="d-grid gap-2">
-            <input type="submit" name="btn_sign_up" class="form-control btn btn-dark" id="btn_sign_up" value="Sign Up">
-            <br>
-        </div>
-        <div class="d-grid gap-2">
-            <input type="submit" name="btn_forgot_password" class="form-control btn btn-dark" id="btn_forgot_password" value="Forgot Password?">
+            <input type="submit" name="btn_change_password" class="form-control btn btn-dark" id="btn_change_password" value="Change Password">
             <br>
         </div>
     </form>

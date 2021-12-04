@@ -32,6 +32,8 @@
     request.getSession().setAttribute("login",false);
     request.getSession().setAttribute("signUpAccount",false);
     request.getSession().setAttribute("forgotPasswordAccount",false);
+    request.getSession().setAttribute("changePasswordAccount",false);
+
 %>
 
 <div class="container-fluid bg-light">

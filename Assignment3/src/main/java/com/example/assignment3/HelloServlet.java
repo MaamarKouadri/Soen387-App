@@ -47,8 +47,9 @@ public class HelloServlet extends HttpServlet {
         UserDaoImpl dbManager = new UserDaoImpl();
 
         boolean loginVisited =  (boolean)session.getAttribute("login");
-        boolean forgotPasswordAccount =  (boolean)session.getAttribute("forgotPasswordAccount");
-        boolean signUpAccount =  (boolean)session.getAttribute("signUpAccount");
+        boolean forgotPasswordAccountVisited =  (boolean)session.getAttribute("forgotPasswordAccount");
+        boolean signUpAccountVisited =  (boolean)session.getAttribute("signUpAccount");
+        boolean changePasswordAccountVisited =  (boolean)session.getAttribute("changePasswordAccount");
         boolean UserVisited  = (boolean)session.getAttribute("user");
         boolean PollVisited  = (boolean)session.getAttribute("Poll");
         boolean VoteVisited  = (boolean)session.getAttribute("vote");
@@ -63,11 +64,14 @@ public class HelloServlet extends HttpServlet {
         if(loginVisited) {
             loginPage(loginVisited, request, out, response, session, dbManager);
         }
-        if(forgotPasswordAccount) {
-            forgotPasswordAccountPage(forgotPasswordAccount, request, out, response, session, dbManager);
+        if(forgotPasswordAccountVisited) {
+            forgotPasswordAccountPage(forgotPasswordAccountVisited, request, out, response, session, dbManager);
         }
-        if(signUpAccount) {
-            signUpAccountPage(signUpAccount, request, out, response, session, dbManager);
+        if(signUpAccountVisited) {
+            signUpAccountPage(signUpAccountVisited, request, out, response, session, dbManager);
+        }
+        if(changePasswordAccountVisited) {
+            changePasswordAccountPage(signUpAccountVisited, request, out, response, session, dbManager);
         }
         if(UserVisited) {
             createUserPage(UserVisited, request, out, response, session, dbManager);
@@ -101,7 +105,16 @@ public class HelloServlet extends HttpServlet {
         }
     }
 
-    public void signUpAccountPage(boolean signUpAccount, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+    public void changePasswordAccountPage(boolean signUpAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(request.getParameter("btn_change_password")!= null) {
+            ErrorMessage = "Change Password not yet implemented!";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+    }
+
+    public void signUpAccountPage(boolean signUpAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
         if(request.getParameter("btn_sign_up")!= null) {
             ErrorMessage = "Sign Up not yet implemented!";
             session.setAttribute("ErrorMessage",ErrorMessage);
@@ -110,7 +123,7 @@ public class HelloServlet extends HttpServlet {
         }
     }
 
-    public void forgotPasswordAccountPage(boolean forgotPasswordAccount, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+    public void forgotPasswordAccountPage(boolean forgotPasswordAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
         if(request.getParameter("btn_forgot_password")!= null) {
             ErrorMessage = "Forgot Password not yet implemented!";
             session.setAttribute("ErrorMessage",ErrorMessage);
