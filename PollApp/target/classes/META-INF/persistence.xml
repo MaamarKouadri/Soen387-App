@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+    <persistence-unit name="PollApp" transaction-type="RESOURCE_LOCAL">
+        <!-- Persistence provider -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Entity classes -->
+        <class>com.pollapp.jpa.UserJPA</class>
+
+        <properties>
+            <!-- The JDBC URL to the database instance -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/poll_app?useSSL=false&amp;useJDBCCompliantTime
+zoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC" />
+
+            <!-- The database username -->
+            <property name="javax.persistence.jdbc.user" value="root" />
+
+            <!-- The database password -->
+            <property name="javax.persistence.jdbc.password" value="" />
+
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+        </properties>
+    </persistence-unit>
+</persistence>

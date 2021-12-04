@@ -19,6 +19,10 @@
     request.getSession().setAttribute("PollManagement",false);
     request.getSession().setAttribute("user",false);
     request.getSession().setAttribute("updatePoll",false);
+    request.getSession().setAttribute("accessPoll",false);
+    request.getSession().setAttribute("listPolls",false);
+    request.getSession().setAttribute("accessListPolls",false);
+    request.getSession().setAttribute("login",false);
 %>
 <jsp:include page="Header.jsp" />
 
@@ -28,8 +32,8 @@
     <form action="PollApp"  method="Post">
         <h3 style="text-align: center">Create Poll Form</h3>
         <div class="mb-4">
-            <label for="exampleInputID" class="form-label">Please enter your pre-defined pass-code:</label>
-            <input  name="PollUserID" type="text" class="form-control" id="exampleInputID" >
+            <label for="exampleInputID" class="form-label">Please enter your user id:</label>
+            <input  name="PollUserName" type="text" class="form-control" id="exampleInputID" >
         </div>
         <div class="mb-4">
             <label for="exampleInputName" class="form-label">Enter the name of the Poll:</label>

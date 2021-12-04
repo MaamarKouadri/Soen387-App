@@ -1,5 +1,7 @@
 package company;
-
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 
 public class User {
@@ -12,12 +14,34 @@ public class User {
     private Timestamp timeSelected;
     public boolean hasVoted;
 
+    //create a function  shw
 
 
     // constructor
     public User(String type, String uniqueId) {
         this.uniqueId = uniqueId;
         this.type = type;
+    }
+
+    // New HashFunction
+    public String HashFunction(String password) {
+        String hashed ="";
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+            //update the md object
+            md.update(password.getBytes(), 0, password.length());
+//output the MD5 equivalent
+            //System.out.println(new BigInteger(1, md.digest()).toString(16));
+            hashed = new BigInteger(1, md.digest()).toString(16);
+            return hashed;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return hashed;
+    }
+    public User( String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     // getters
@@ -49,8 +73,7 @@ public class User {
 
     @Override
     public String toString() {
-
-        String UserC ="This is user number   " + uniqueId +" of type " + type;
+        String UserC ="This is user number " + uniqueId +" of type " + type;
         return UserC;
     }
 

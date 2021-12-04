@@ -24,6 +24,12 @@ public class PollManager {
         poll = new Poll();
     }
 
+    public PollManager(Poll p) {
+
+        isPollCreated= true;
+        poll = p;
+    }
+
     /**
      * initializes the poll
      * @param name name of the poll
@@ -99,7 +105,7 @@ public class PollManager {
             if(debug)
                 System.out.println("closing poll");
 
-            this.poll.close();
+            //this.poll.close();
             this.isPollCreated = false;
             return true;
         } else {
@@ -176,6 +182,26 @@ public class PollManager {
                 System.out.println(participant.getUniqueId() + " selected choice: " + choice.getChoice());
 
             this.poll.vote(participant,choice);
+            return true;
+        } else {
+            // throw error
+            if(debug)
+                System.out.println("error occurred! vote()");
+            return false;
+        }
+    }
+
+    /**
+     * Allows an anonymous user to vote
+     * @param pin unique ID associated to poll
+     * @param choice participants choice
+     */
+    public boolean vote(String pin, Choice choice) {
+        if(this.poll.getStatus().equals(State.Running)) {
+            if(debug)
+                System.out.println(pin + " selected choice: " + choice.getChoice());
+
+            this.poll.vote(pin, choice);
             return true;
         } else {
             // throw error

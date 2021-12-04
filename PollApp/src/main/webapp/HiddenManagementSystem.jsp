@@ -26,14 +26,18 @@
     request.getSession().setAttribute("user",false);
     request.getSession().setAttribute("Poll",false);
     request.getSession().setAttribute("updatePoll",false);
+    request.getSession().setAttribute("accessPoll",false);
+    request.getSession().setAttribute("listPolls",false);
+    request.getSession().setAttribute("accessListPolls",false);
+    request.getSession().setAttribute("login",false);
 %>
 
 <div class="container-fluid bg-light">
     <form  action="PollApp"  method="Post">
         <h3 style="text-align: center">  Poll Management System</h3>
         <br>
-        <h4>The current poll state is <%   if(session.getAttribute("PollObject")!=null) out.println(((PollManager) session.getAttribute("PollObject")).getPoll().getStatus()); %>
-            </h4>
+        <h4>Poll: <%if(session.getAttribute("PollObject")!=null) out.println(((PollManager) session.getAttribute("PollObject")).getPoll().getName()); %></h4>
+        <h4>The current poll state is <%   if(session.getAttribute("PollObject")!=null) out.println(((PollManager) session.getAttribute("PollObject")).getPoll().getStatus()); %></h4>
         <div class="mb-3">
             <label for="PollAction">Action to take </label>
             <select  class="form-select" aria-label="Default select example" name="PollAction" id="PollAction">
@@ -41,6 +45,7 @@
                 <option>Unrelease Poll</option>
                 <option>Run Poll</option>
                 <option>Close Poll</option>
+                <option>Delete Poll</option>
             </select>
         </div >
         <div class="d-grid gap-2">

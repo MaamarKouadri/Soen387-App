@@ -16,7 +16,7 @@
 
 
     <welcome-file-list>
-        <welcome-file> User.jsp </welcome-file>
+        <welcome-file> AccessPoll.jsp </welcome-file>
     </welcome-file-list>
 
 </web-app>
