@@ -16,7 +16,7 @@ import java.io.File;
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
 
-    private UserManagement userManagement;
+    private UserManagement userManagement = new UserManagement();
     private String message;
     private Choice [] ChoiceArray;
     private PollManager Poll;

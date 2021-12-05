@@ -18,6 +18,11 @@ public class UserManagement implements IUserManagament {
     @Override
     public void signUp(String username, String email) {
         String verificationToken = generateToken();
+        try {
+            JavaMailUtil.sendMail("nicosaidhai@gmail.com");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -33,32 +38,6 @@ public class UserManagement implements IUserManagament {
     @Override
     public void changePassword(String password) {
         if(currentUser!=null && false) {
-            EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
-            EntityTransaction transaction = null;
-            try {
-                // Get a transaction
-                transaction = manager.getTransaction();
-
-                // Begin the transaction
-                transaction.begin();
-                currentUser.setUserPassword(password);
-
-                // Save the userJPA object
-                manager.persist(currentUser);
-
-                // Commit the transaction
-                transaction.commit();
-            } catch (Exception ex) {
-                // If there are any exceptions, roll back the changes
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                // Print the Exception
-                ex.printStackTrace();
-            } finally {
-                // Close the EntityManager
-                manager.close();
-            }
         }
     }
 
