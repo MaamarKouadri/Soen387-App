@@ -9,6 +9,17 @@ public class UsersEntity {
     private String userName;
     private String email;
     private String userPassword;
+    private boolean isChanged;
+
+    @Basic
+    @Column(name = "PasswordChange")
+    public boolean isChanged() {
+        return isChanged;
+    }
+
+    public void setChanged(boolean changed) {
+        isChanged = changed;
+    }
 
     @Id
     @Column(name = "UserId")

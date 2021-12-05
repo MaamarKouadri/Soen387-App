@@ -16,10 +16,10 @@ public class UserManagement implements IUserManagament {
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("default");
 
     @Override
-    public void signUp(String username, String email) {
+    public void signUp(String email, String username) {
         String verificationToken = generateToken();
         try {
-            JavaMailUtil.sendMail("nicosaidhai@gmail.com");
+            JavaMailUtil.sendMail("dummy.for.school.23@gmail.com", "Will");
         } catch (Exception e) {
             e.printStackTrace();
         }
