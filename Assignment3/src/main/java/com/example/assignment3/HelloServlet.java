@@ -17,6 +17,8 @@ import java.io.File;
 public class HelloServlet extends HttpServlet {
 
     private UserManagement userManagement = new UserManagement();
+    private UsersEntity currentUser;
+
     private String message;
     private Choice [] ChoiceArray;
     private PollManager Poll;
@@ -247,7 +249,9 @@ public class HelloServlet extends HttpServlet {
             if(request.getParameter("btn_change_password") != null) {
                 // data is valid
                 String password = request.getParameter("password");
-                userManagement.changePassword(password);
+
+                // todo: set currentUser somewhere
+                userManagement.changePassword(password, currentUser.getEmail());
                 response.sendRedirect("login.jsp");
 
             } else {

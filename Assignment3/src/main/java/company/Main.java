@@ -21,6 +21,7 @@ public class Main {
         System.out.println("Original Password: " +  Password);
 
         System.out.println("Crypted Password: " +  cryptedPassword);
+
     }
 
     static public void testPollManager() throws Exception {
