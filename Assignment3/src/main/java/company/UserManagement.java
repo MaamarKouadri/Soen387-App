@@ -35,13 +35,12 @@ public class UserManagement implements IUserManagament {
     }
 
     @Override
-    public boolean emailVerification() {
-        // todo: once received verification token, allow user to change password?
-        return false;
+    public boolean emailVerification(String email) {
+        return VerifyEmail(email);
     }
 
     @Override
-    public void changePassword(String email, String password) {
+    public int changePassword(String email, String password) {
         EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -57,6 +56,9 @@ public class UserManagement implements IUserManagament {
                         setParameter(2, email).
                         executeUpdate();
                 System.out.println("The Password has been updated or no ?" + execution);
+                if(execution == 0) {
+                    return -1;
+                }
             }
             catch(Exception e ) {
                 String message = e.getMessage();
@@ -85,7 +87,7 @@ public class UserManagement implements IUserManagament {
             // Close the EntityManager
             manager.close();
         }
-
+        return 0;
     }
 
 
