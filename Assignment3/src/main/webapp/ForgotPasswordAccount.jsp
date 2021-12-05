@@ -24,6 +24,7 @@
     request.getSession().setAttribute("signUpAccount",false);
     request.getSession().setAttribute("forgotPasswordAccount",true);
     request.getSession().setAttribute("changePasswordAccount",false);
+    request.getSession().setAttribute("changePasswordForgetAccount",false);
 
 %>
 <body>

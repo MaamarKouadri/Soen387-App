@@ -17,7 +17,6 @@ import java.io.File;
 public class HelloServlet extends HttpServlet {
 
     private UserManagement userManagement = new UserManagement();
-    private UsersEntity currentUser;
 
     private String message;
     private Choice [] ChoiceArray;
@@ -54,6 +53,7 @@ public class HelloServlet extends HttpServlet {
         boolean forgotPasswordAccountVisited =  (boolean)session.getAttribute("forgotPasswordAccount");
         boolean signUpAccountVisited =  (boolean)session.getAttribute("signUpAccount");
         boolean changePasswordAccountVisited =  (boolean)session.getAttribute("changePasswordAccount");
+        boolean changePasswordAccountForgetVisited =  (boolean)session.getAttribute("changePasswordForgetAccount");
         boolean UserVisited  = (boolean)session.getAttribute("user");
         boolean PollVisited  = (boolean)session.getAttribute("Poll");
         boolean VoteVisited  = (boolean)session.getAttribute("vote");
@@ -75,7 +75,10 @@ public class HelloServlet extends HttpServlet {
             signUpAccountPage(signUpAccountVisited, request, out, response, session, dbManager);
         }
         if(changePasswordAccountVisited) {
-            changePasswordAccountPage(signUpAccountVisited, request, out, response, session, dbManager);
+            changePasswordAccountPage(changePasswordAccountVisited, request, out, response, session, dbManager);
+        }
+        if(changePasswordAccountForgetVisited) {
+            changePasswordAccountForgetPage(changePasswordAccountForgetVisited, request, out, response, session, dbManager);
         }
         if(UserVisited) {
             createUserPage(UserVisited, request, out, response, session, dbManager);
@@ -229,8 +232,15 @@ public class HelloServlet extends HttpServlet {
         if(request.getParameter("btn_forgot_password")!= null && request.getParameter("email").length() != 0) {
             String email = request.getParameter("email");
             try {
-                userManagement.forgotPassword(email);
-                response.sendRedirect("login.jsp");
+                int val = userManagement.forgotPassword(email);
+
+                if(val == 0) {
+                    response.sendRedirect("login.jsp");
+                } else {
+                    ErrorMessage = "User may not update their password anymore.";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                }
             } catch (Error e) {
                 ErrorMessage = "Email does not exist.";
                 session.setAttribute("ErrorMessage",ErrorMessage);
@@ -245,14 +255,25 @@ public class HelloServlet extends HttpServlet {
     }
 
     public void changePasswordAccountPage(boolean changePasswordAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        if(changePasswordAccountVisited && request.getParameter("password").length() == 0) {
+        if(request.getParameter("password").length() != 0) {
             if(request.getParameter("btn_change_password") != null) {
-                // data is valid
-                String password = request.getParameter("password");
 
-                // todo: set currentUser somewhere
-                userManagement.changePassword(password, currentUser.getEmail());
-                response.sendRedirect("login.jsp");
+                if (userManagement.currentUser.getEmail() != null) {
+                    // data is valid
+                    String password = request.getParameter("password");
+
+                    userManagement.setPassword(password);
+
+                    // reset user
+                    userManagement.currentUser = null;
+                    response.sendRedirect("login.jsp");
+                } else {
+                    ErrorMessage = "You do not have access to this page. ";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
+                }
+
 
             } else {
                 ErrorMessage = "Please provide a password.";
@@ -266,7 +287,40 @@ public class HelloServlet extends HttpServlet {
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         }
+    }
+    public void changePasswordAccountForgetPage(boolean changePasswordAccountForgetVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(request.getParameter("password").length() != 0) {
+            if(request.getParameter("btn_change_password") != null) {
 
+                if (userManagement.currentUser.getEmail() != null) {
+                    // data is valid
+                    String password = request.getParameter("password");
+
+                    userManagement.changePassword(userManagement.currentUser.getEmail(), password);
+
+                    // reset user
+                    userManagement.currentUser = null;
+                    response.sendRedirect("login.jsp");
+                } else {
+                    ErrorMessage = "You do not have access to this page. ";
+                    session.setAttribute("ErrorMessage",ErrorMessage);
+                    response.sendRedirect("ErrorHandling.jsp");
+                    isError = true;
+                }
+
+
+            } else {
+                ErrorMessage = "Please provide a password.";
+                session.setAttribute("ErrorMessage",ErrorMessage);
+                response.sendRedirect("ErrorHandling.jsp");
+                isError = true;
+            }
+        } else {
+            ErrorMessage = "Please provide a password.";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
     }
 
     public void loginPage(boolean loginVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {

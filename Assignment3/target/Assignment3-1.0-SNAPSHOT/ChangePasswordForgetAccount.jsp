@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Forgot Password page</title>
+    <title>Change password page</title>
 </head>
 <%
     request.getSession().setAttribute("login",false);
@@ -21,24 +21,23 @@
     request.getSession().setAttribute("accessPoll",false);
     request.getSession().setAttribute("listPolls",false);
     request.getSession().setAttribute("accessListPolls",false);
-    request.getSession().setAttribute("signUpAccount",false);
-    request.getSession().setAttribute("forgotPasswordAccount",true);
     request.getSession().setAttribute("changePasswordAccount",false);
-    request.getSession().setAttribute("changePasswordForgetAccount",false);
-
+    request.getSession().setAttribute("signUpAccount",false);
+    request.getSession().setAttribute("forgotPasswordAccount",false);
+    request.getSession().setAttribute("changePasswordForgetAccount",true);
 %>
 <body>
 <jsp:include page="Header.jsp" />
 
 <div class="container-fluid bg-light">
     <form action="PollApp"  method="Post">
-        <h3 style="text-align: center">Forgot Password Form</h3>
+        <h3 style="text-align: center">Change Password Form</h3>
         <div class="mb-4">
-            <label for="email" class="form-label">Email:</label>
-            <input  name="email" type="text" class="form-control" id="email" >
+            <label for="password" class="form-label">Passsword:</label>
+            <input name="password" type="password" class="form-control" id="password" >
         </div>
         <div class="d-grid gap-2">
-            <input type="submit" name="btn_forgot_password" class="form-control btn btn-dark" id="btn_forgot_password" value="Forgot Password">
+            <input type="submit" name="btn_change_password" class="form-control btn btn-dark" id="btn_change_password" value="Change Password">
             <br>
         </div>
     </form>

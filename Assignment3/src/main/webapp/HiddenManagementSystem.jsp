@@ -33,6 +33,7 @@
     request.getSession().setAttribute("signUpAccount",false);
     request.getSession().setAttribute("forgotPasswordAccount",false);
     request.getSession().setAttribute("changePasswordAccount",false);
+    request.getSession().setAttribute("changePasswordForgetAccount",false);
 
 %>
 
