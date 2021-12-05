@@ -23,6 +23,8 @@
     request.getSession().setAttribute("accessListPolls",false);
     request.getSession().setAttribute("signUpAccount",false);
     request.getSession().setAttribute("forgotPasswordAccount",true);
+    request.getSession().setAttribute("changePasswordAccount",false);
+
 %>
 <body>
 <jsp:include page="Header.jsp" />

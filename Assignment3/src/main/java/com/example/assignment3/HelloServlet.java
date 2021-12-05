@@ -6,6 +6,7 @@ import java.util.*;
 import JDBC.daoimpl.UserDaoImpl;
 import JDBC.db.DBConnection;
 import company.*;
+import entity.UsersEntity;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.*;
@@ -15,6 +16,7 @@ import java.io.File;
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
 
+    private UserManagement userManagement;
     private String message;
     private Choice [] ChoiceArray;
     private PollManager Poll;
@@ -102,33 +104,6 @@ public class HelloServlet extends HttpServlet {
         }
         if(ListPollsVisited) {
             listPollsPage(ListPollsVisited, request, out, response, session, dbManager);
-        }
-    }
-
-    public void changePasswordAccountPage(boolean signUpAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        if(request.getParameter("btn_change_password")!= null) {
-            ErrorMessage = "Change Password not yet implemented!";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
-        }
-    }
-
-    public void signUpAccountPage(boolean signUpAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        if(request.getParameter("btn_sign_up")!= null) {
-            ErrorMessage = "Sign Up not yet implemented!";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
-        }
-    }
-
-    public void forgotPasswordAccountPage(boolean forgotPasswordAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        if(request.getParameter("btn_forgot_password")!= null) {
-            ErrorMessage = "Forgot Password not yet implemented!";
-            session.setAttribute("ErrorMessage",ErrorMessage);
-            response.sendRedirect("ErrorHandling.jsp");
-            isError = true;
         }
     }
 
@@ -233,14 +208,66 @@ public class HelloServlet extends HttpServlet {
     public void destroy() {
     }
 
-    public void loginPage(boolean loginVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
-        if(request.getParameter("btn_login")!= null) {
-            ErrorMessage = "Login not yet implemented!";
+    public void signUpAccountPage(boolean signUpAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(request.getParameter("btn_sign_up")!= null && request.getParameter("username").length() != 0
+                && request.getParameter("email").length() != 0) {
+            String username = request.getParameter("username");
+            String email = request.getParameter("email");
+            userManagement.signUp(username, email);
+            response.sendRedirect("login.jsp");
+        } else {
+            ErrorMessage = "Missing fields.";
             session.setAttribute("ErrorMessage",ErrorMessage);
             response.sendRedirect("ErrorHandling.jsp");
             isError = true;
         }
-        else if(request.getParameter("btn_sign_up")!= null) {
+    }
+
+    public void forgotPasswordAccountPage(boolean forgotPasswordAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(request.getParameter("btn_forgot_password")!= null && request.getParameter("email").length() != 0) {
+            String email = request.getParameter("email");
+            try {
+                userManagement.forgotPassword(email);
+                response.sendRedirect("login.jsp");
+            } catch (Error e) {
+                ErrorMessage = "Email does not exist.";
+                session.setAttribute("ErrorMessage",ErrorMessage);
+                response.sendRedirect("ErrorHandling.jsp");
+            }
+        } else {
+            ErrorMessage = "Missing fields.";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+    }
+
+    public void changePasswordAccountPage(boolean changePasswordAccountVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+        if(changePasswordAccountVisited && request.getParameter("password").length() == 0) {
+            if(request.getParameter("btn_change_password") != null) {
+                // data is valid
+                String password = request.getParameter("password");
+                userManagement.changePassword(password);
+                response.sendRedirect("login.jsp");
+
+            } else {
+                ErrorMessage = "Please provide a password.";
+                session.setAttribute("ErrorMessage",ErrorMessage);
+                response.sendRedirect("ErrorHandling.jsp");
+                isError = true;
+            }
+        } else {
+            ErrorMessage = "Please provide a password.";
+            session.setAttribute("ErrorMessage",ErrorMessage);
+            response.sendRedirect("ErrorHandling.jsp");
+            isError = true;
+        }
+
+    }
+
+    public void loginPage(boolean loginVisited, HttpServletRequest request, PrintWriter out, HttpServletResponse response, HttpSession session, UserDaoImpl dbManager) throws IOException {
+
+        if(request.getParameter("btn_sign_up")!= null) {
             response.sendRedirect("SignUpAccount.jsp");
         }
         else if(request.getParameter("btn_forgot_password")!= null) {

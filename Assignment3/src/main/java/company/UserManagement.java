@@ -1,11 +1,19 @@
 package company;
 
 import UserManagementInterface.IUserManagament;
+import entity.UsersEntity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
 
 import java.util.Random;
 
 public class UserManagement implements IUserManagament {
     private static final int MAX_UID_LENGTH = 30;
+    private UsersEntity currentUser;
+
+    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("default");
 
     @Override
     public void signUp(String username, String email) {
@@ -13,7 +21,7 @@ public class UserManagement implements IUserManagament {
     }
 
     @Override
-    public void forgotPassword() {
+    public void forgotPassword(String email) {
 
     }
 
@@ -23,8 +31,35 @@ public class UserManagement implements IUserManagament {
     }
 
     @Override
-    public void changePassword() {
+    public void changePassword(String password) {
+        if(currentUser!=null && false) {
+            EntityManager manager = ENTITY_MANAGER_FACTORY.createEntityManager();
+            EntityTransaction transaction = null;
+            try {
+                // Get a transaction
+                transaction = manager.getTransaction();
 
+                // Begin the transaction
+                transaction.begin();
+                currentUser.setUserPassword(password);
+
+                // Save the userJPA object
+                manager.persist(currentUser);
+
+                // Commit the transaction
+                transaction.commit();
+            } catch (Exception ex) {
+                // If there are any exceptions, roll back the changes
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                // Print the Exception
+                ex.printStackTrace();
+            } finally {
+                // Close the EntityManager
+                manager.close();
+            }
+        }
     }
 
     private String generateToken() {

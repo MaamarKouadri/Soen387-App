@@ -31,19 +31,7 @@
 
 <div class="container-fluid bg-light">
     <form action="PollApp"  method="Post">
-        <h3 style="text-align: center">Login Form</h3>
-        <div class="mb-4">
-            <label for="username" class="form-label">Username:</label>
-            <input  name="username" type="text" class="form-control" id="username" >
-        </div>
-        <div class="mb-4">
-            <label for="password" class="form-label">Password:</label>
-            <input type="password" name="password" class="form-control" id="password" >
-        </div>
-        <div class="d-grid gap-2">
-            <input type="submit" name="btn_login" class="form-control btn btn-dark" id="btn_login" value="Login">
-            <br>
-        </div>
+        <h3 style="text-align: center">User Management</h3>
         <div class="d-grid gap-2">
             <input type="submit" name="btn_sign_up" class="form-control btn btn-dark" id="btn_sign_up" value="Sign Up">
             <br>

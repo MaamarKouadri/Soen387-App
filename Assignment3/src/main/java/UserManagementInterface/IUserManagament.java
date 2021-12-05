@@ -2,7 +2,7 @@ package UserManagementInterface;
 
 public interface IUserManagament {
     void signUp(String username, String email);
-    void forgotPassword();
+    void forgotPassword(String email);
     boolean emailVerification();
-    void changePassword();
+    void changePassword(String password);
 }
