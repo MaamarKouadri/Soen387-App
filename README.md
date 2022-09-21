@@ -26,3 +26,7 @@
 4. run Tomcat 10.0.11
 
 ### Project Description
+
+This project is a Full Stack web-based poll application system. It allows users to log in , create a profile, and vote in a poll. The whole point of this app is to demonstrate how we can create a Frontend that will communicate with the Java server/servlet through the HTTP Get and Post verbs/methods and manipulate the database. 
+
+#### Test
