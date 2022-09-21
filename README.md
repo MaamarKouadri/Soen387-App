@@ -63,10 +63,13 @@ Database : SQL
 •	Tables : users, poll, vote , choice, haspoll UML can be found at path: Soen387-App/Assignment3/Diagram/Entinty.JPG
 
 •	Queries : 
-• Create/Update Poll  &nbsp;
-• Create/Update Votes  &nbsp; 
-• Read/Retrieve Users &nbsp;
-• Read/Retrieve User Pin  and more , all queries implementations can be found at  path  : Assignment3/src/main/java/JDBC/daoimpl/UserDaoImpl.java  &nbsp; 
+ Create/Update Poll  &nbsp;
+ 
+ Create/Update Votes  &nbsp; 
+ 
+ Read/Retrieve Users &nbsp;
+ 
+ Read/Retrieve User Pin  and more , all queries implementations can be found at  path  : Assignment3/src/main/java/JDBC/daoimpl/UserDaoImpl.java  &nbsp; 
 
 
 
