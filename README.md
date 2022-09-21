@@ -31,7 +31,9 @@ This project is a Full Stack web-based poll application system. It allows users 
 
 #### Technologies used :
 Frontend: JSP,Html,Css , JavaScript , Bootstrap  
+
 Backend language: Java / Java Servlet
+
 Database : SQL 
 
 #### Programming Concepts:
@@ -61,10 +63,10 @@ Database : SQL
 •	Tables : users, poll, vote , choice, haspoll UML can be found at path: Soen387-App/Assignment3/Diagram/Entinty.JPG
 
 •	Queries : 
-• Create/Update Poll
-• Create/Update Votes
-• Read/Retrieve Users
-• Read/Retrieve User Pin  and more , all queries implementations can be found at  path  : Assignment3/src/main/java/JDBC/daoimpl/UserDaoImpl.java
+• Create/Update Poll  &nbsp;
+• Create/Update Votes  &nbsp; 
+• Read/Retrieve Users &nbsp;
+• Read/Retrieve User Pin  and more , all queries implementations can be found at  path  : Assignment3/src/main/java/JDBC/daoimpl/UserDaoImpl.java  &nbsp; 
 
 
 
